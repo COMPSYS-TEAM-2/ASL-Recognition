@@ -1,11 +1,10 @@
 import pandas as pd
-import numpy as np
 import matplotlib.pyplot as plt
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
 import torch.optim as optim
-from torch.utils.data import Dataset, DataLoader
+from torch.utils.data import DataLoader
+from mnist import MNIST
 
 from net import Net
 
@@ -29,7 +28,7 @@ class Train():
         running_loss_list = []
         for epoch in range(self.EPOCH):
             running_loss = 0.0
-            for i, data in enumerate(self.trainloader, 0):
+            for i, data in enumerate(self.trainloader):
                 inputs, labels = data
                 optimizer.zero_grad()
 
@@ -40,9 +39,9 @@ class Train():
 
                 # print statistics
                 running_loss += loss.item()
-                if i % 200 == 199:
+                if i % 800 == 799:
                     print('[%d, %5d] loss: %.3f' %
-                          (epoch + 1, i + 1, running_loss / 200)
+                          (epoch + 1, i + 1, running_loss / 800)
                           )
                     running_loss_list.append(running_loss)
                     running_loss = 0.0
@@ -71,20 +70,3 @@ class Train():
                 total += labels.size(0)
                 correct += (predicted == labels).sum().item()
         print('Accuracy of the network on test images: ', correct/total)
-
-
-class MNIST(Dataset):
-    def __init__(self, df):
-        self.rows = len(df)
-        self.imgnp = df.iloc[:self.rows, 1:].values
-        self.labels = df.iloc[:self.rows, 0].values
-
-    def __len__(self):
-        return self.rows
-
-    def __getitem__(self, idx):
-        image = torch.tensor(
-            self.imgnp[idx], dtype=torch.float) / 255  # Normalize
-        image = image.view(1, 28, 28)  # (channel, height, width)
-        label = self.labels[idx]
-        return (image, label)
