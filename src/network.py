@@ -13,6 +13,7 @@ class Network():
     EPOCH = 5
 
     def __init__(self):
+        # Initialises a new Network instance which loads asl data
         train_df = pd.read_csv("./data/sign_mnist_train.csv")
         test_df = pd.read_csv("./data/sign_mnist_test.csv")
         self.trainloader = DataLoader(
@@ -22,6 +23,7 @@ class Network():
         self.model = Model()
 
     def train(self):
+        # Trains the current model with the training data
         criterion = nn.CrossEntropyLoss()
         optimizer = optim.SGD(self.model.parameters(), lr=0.001, momentum=0.9)
 
@@ -51,6 +53,7 @@ class Network():
         self.save_model()
 
     def test_all(self, train=False):
+        # Tests the current model with the test data by default. If train is set to true then will test the model with the training data 
         loader = self.testloader
         if (train):
             loader = self.trainloader
@@ -68,9 +71,14 @@ class Network():
                 f"Accuracy of the network on {'train' if(train) else 'test'} images: ", correct/total)
 
     def save_model(self, name="model"):
+        # Saves the model under the given name
+        # Default name is "model"
         torch.save(self.model.state_dict(), f"output/models/{name}.pth")
 
     def load_model(self, name="model"):
+        # Loads the model under the given name.
+        # If there are errors it will train the model
+        # Default name is "model"
         try:
             self.model.load_state_dict(
                 torch.load(f"output/models/{name}.pth"))
