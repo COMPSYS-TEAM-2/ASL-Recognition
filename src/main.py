@@ -4,9 +4,8 @@ import matplotlib.pyplot as plt
 
 def main():
     network = Network()
-    network.train()
-    network.test()
-    plt.show()
+    network.load_model()
+    network.test_all()
 
 
 if __name__ == "__main__":

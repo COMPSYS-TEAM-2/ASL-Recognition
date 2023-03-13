@@ -46,28 +46,35 @@ class Network():
                     running_loss_list.append(running_loss)
                     running_loss = 0.0
         print('Finished Training')
-
         plt.plot(running_loss_list)
+        self.test_all(True)
+        self.save_model()
+
+    def test_all(self, train=False):
+        loader = self.testloader
+        if (train):
+            loader = self.trainloader
 
         correct = 0
         total = 0
         with torch.no_grad():
-            for data in self.trainloader:
+            for data in loader:
                 images, labels = data
                 outputs = self.model(images)
                 _, predicted = torch.max(outputs.data, 1)
                 total += labels.size(0)
                 correct += (predicted == labels).sum().item()
-        print('Accuracy of the network on train images: ', correct/total)
+            print(
+                f"Accuracy of the network on {'train' if(train) else 'test'} images: ", correct/total)
 
-    def test(self):
-        correct = 0
-        total = 0
-        with torch.no_grad():
-            for i, data in enumerate(self.testloader, 0):
-                images, labels = data
-                outputs = self.model(images)
-                _, predicted = torch.max(outputs.data, 1)
-                total += labels.size(0)
-                correct += (predicted == labels).sum().item()
-        print('Accuracy of the network on test images: ', correct/total)
+    def save_model(self, name="model"):
+        torch.save(self.model.state_dict(), f"output/models/{name}.pth")
+
+    def load_model(self, name="model"):
+        try:
+            self.model.load_state_dict(
+                torch.load(f"output/models/{name}.pth"))
+            print("Model Load Success!")
+        except:
+            print("Model Load Failure!\nTraining Model")
+            self.train()
