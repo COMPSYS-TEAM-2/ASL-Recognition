@@ -5,9 +5,9 @@ from torch.nn import MaxPool2d
 import torch.nn.functional as F
 
 
-class Net(Module):
+class Model(Module):
     def __init__(self):
-        super(Net, self).__init__()
+        super(Model, self).__init__()
         self.conv1 = Conv2d(1, 6, 5)
         self.pool = MaxPool2d(2, 2)
         self.conv2 = Conv2d(6, 16, 5)

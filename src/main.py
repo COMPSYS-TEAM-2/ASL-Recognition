@@ -1,11 +1,11 @@
-from train import Train
+from network import Network
 import matplotlib.pyplot as plt
 
 
 def main():
-    train = Train()
-    train.train()
-    train.test()
+    network = Network()
+    network.train()
+    network.test()
     plt.show()
 
 
