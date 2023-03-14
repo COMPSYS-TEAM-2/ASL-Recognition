@@ -38,6 +38,6 @@ def prepare_image(path: str):
         new_image.paste(img, (wleft, 0))  # paste resized image on white canvas
 
     pixels = list(new_image.getdata())  # get pixel values
-    pixels_normalized = [(255 - x) * 1.0 / 255.0 for x in pixels]
+    pixels_normalized = [x / 255.0 for x in pixels]
 
     return FloatTensor(pixels_normalized).view(1, 28, 28)
