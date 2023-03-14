@@ -2,4 +2,4 @@ PyQt6 >= 6
 torch >= 1.13
 torchvision >= 0.14
 matplotlib >= 3.7
-pandas >= 1.53
+pandas >= 1.5.3
