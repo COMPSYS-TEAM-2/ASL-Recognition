@@ -1,3 +1,4 @@
+import os
 import pandas as pd
 import matplotlib.pyplot as plt
 import torch
@@ -53,7 +54,7 @@ class Network():
         self.save_model()
 
     def test_all(self, train=False):
-        # Tests the current model with the test data by default. If train is set to true then will test the model with the training data 
+        # Tests the current model with the test data by default. If train is set to true then will test the model with the training data
         loader = self.testloader
         if (train):
             loader = self.trainloader
@@ -69,13 +70,21 @@ class Network():
                 correct += (predicted == labels).sum().item()
             print(
                 f"Accuracy of the network on {'train' if(train) else 'test'} images: ", correct/total)
-    
+
     def test(self, image):
         return self.model(image)
 
     def save_model(self, name="model"):
         # Saves the model under the given name
         # Default name is "model"
+        try:
+            os.mkdir("./output")
+        except:
+            pass
+        try:
+            os.mkdir("./output/models")
+        except:
+            pass
         torch.save(self.model.state_dict(), f"output/models/{name}.pth")
 
     def load_model(self, name="model"):
