@@ -40,4 +40,4 @@ def prepare_image(path: str):
     pixels = list(new_image.getdata())  # get pixel values
     pixels_normalized = [(255 - x) * 1.0 / 255.0 for x in pixels]
 
-    return FloatTensor(pixels_normalized).view(1, 28, 28)[0]
+    return FloatTensor(pixels_normalized).view(1, 28, 28)
