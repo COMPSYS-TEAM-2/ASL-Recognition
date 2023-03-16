@@ -12,13 +12,14 @@ from model import Model
 
 class Network():
     EPOCH = 5
+    TRAIN_BATCH_SIZE = 4
 
     def __init__(self):
         # Initialises a new Network instance which loads asl data
         train_df = pd.read_csv("./data/sign_mnist_train.csv")
         test_df = pd.read_csv("./data/sign_mnist_test.csv")
         self.trainloader = DataLoader(
-            MNIST(train_df), batch_size=4, shuffle=True)
+            MNIST(train_df), batch_size=self.TRAIN_BATCH_SIZE, shuffle=True)
         self.testloader = DataLoader(
             MNIST(test_df), batch_size=1, shuffle=True)
         self.model = Model()
@@ -68,8 +69,9 @@ class Network():
                 _, predicted = torch.max(outputs.data, 1)
                 total += labels.size(0)
                 correct += (predicted == labels).sum().item()
+                # TODO limit number of decimal points
             print(
-                f"Accuracy of the network on {'train' if(train) else 'test'} images: ", correct/total)
+                f"Accuracy of the network on {'train' if(train) else 'test'} images: ", correct/total * 100, "%")
 
     def test(self, image):
         return self.model(image)
