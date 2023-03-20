@@ -14,6 +14,18 @@ import PyQt5.QtWidgets as pyqt
 from network import Network
 
 
+class TrainWindow(pyqt.QMainWindow):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+
+        self.setWindowTitle("Training model")
+        self.setGeometry(300, 150, 500, 500)
+        # Load the new look of the training gui
+        self.progress = pyqt.QProgressBar(self)
+        self.progress.setGeometry(200, 80, 250, 20)
+        self.formLayout = pyqt.QFormLayout()
+
+
 class MainWindow(pyqt.QMainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -32,34 +44,29 @@ class MainWindow(pyqt.QMainWindow):
         menuBar = self.menuBar()
         # Adding menu bar items
         fileMenu = menuBar.addMenu('File')
-        dataSetMenu = menuBar.addMenu('Dataset')
+        dataSetMenu = menuBar.addMenu('View')
         # Add items to the menus
-        fileSaveAction = pyqt.QAction("Save", self)
-        fileSaveAction.setShortcut('Ctrl+S')
-        fileLoadAction = pyqt.QAction("Load", self)
-        fileLoadAction.setShortcut('Ctrl+O')
         fileExitAction = pyqt.QAction("Exit", self)
         fileExitAction.setShortcut('Ctrl+Q')
         fileExitAction.triggered.connect(pyqt.qApp.quit)
-        dataSetTrain = pyqt.QAction("Train", self)
+        dataSetTrain = pyqt.QAction("Train Model", self)
         dataSetTrain.triggered.connect(self.startTrain)
-        dataSetView = pyqt.QAction("View", self)
-        dataSetDownload = pyqt.QAction("Download", self)
+        # dataSetTrain.triggered.connect(self.startTrain)
+        dataSetViewTrain = pyqt.QAction("View Training Images", self)
+        dataSetViewTest = pyqt.QAction("View Test Images", self)
         # Add actions to dropdowns
-        fileMenu.addAction(fileSaveAction)
-        fileMenu.addAction(fileLoadAction)
+        fileMenu.addAction(dataSetTrain)
         fileMenu.addAction(fileExitAction)
-        dataSetMenu.addAction(dataSetTrain)
-        dataSetMenu.addAction(dataSetView)
-        dataSetMenu.addAction(dataSetDownload)
+        dataSetMenu.addAction(dataSetViewTrain)
+        dataSetMenu.addAction(dataSetViewTest)
 
     def startTrain(self):
-        # Load the new look of the training gui
-        self.progress = pyqt.QProgressBar(self)
-        self.progress.setGeometry(200, 80, 250, 20)
-        self.show()
-        network = Network()
-        network.load_model()
+        # Load the new window
+        self.trainWindow = TrainWindow()
+        self.trainWindow.show()
+
+        # network = Network()
+        # network.load_model()
 
     def updateProgressBar(self, val1, val2):
         # Update the progress bar to be a percentage of the max training to be completed 5*6400 = 32000
