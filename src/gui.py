@@ -11,7 +11,7 @@
 
 # Therefore the initial window should have buttons to import data or view the dataset
 import sys
-from PyQt6.QtWidgets import QMainWindow, QApplication, QPushButton, QLabel, QTextEdit, QComboBox, QDialog, QProgressBar
+from PyQt6.QtWidgets import QMainWindow, QApplication, QPushButton, QLabel, QLineEdit, QComboBox, QDialog, QProgressBar, QTextBrowser
 from PyQt6.QtGui import *
 from network import Network
 
@@ -22,7 +22,7 @@ class MainWindow(QMainWindow):
 
         # Define the initial setup
         self.setWindowTitle("Sign Language Recognition")
-        self.setGeometry(300, 100, 400, 600)
+        self.setGeometry(300, 100, 400, 500)
         # Quit Action (File)
         exitAct = QAction('&Quit', self)
         exitAct.setShortcut('Ctrl+Q')
@@ -60,7 +60,7 @@ class MainWindow(QMainWindow):
         self.init_probabilities()
 
     def init_btn(self):
-        btn = QPushButton('Button', self)
+        btn = QPushButton('Take photo', self)
         btn.resize(95, 20)
         btn.move(300, 30)
         btn.show()
@@ -77,12 +77,12 @@ class MainWindow(QMainWindow):
     def init_probabilities(self):
         label1 = QLabel('Letter Probabilties', self)
         label1.resize(95, 40)
-        label1.move(300, 180)
+        label1.move(300, 80)
         label1.show()
-        self.textEdit = QTextEdit(self)  # displaying probability widget
-        self.textEdit.resize(95, 300)
-        self.textEdit.move(300, 220)
-        self.textEdit.show()
+        self.textBrowserData = QTextBrowser(self)  # displaying probability widget
+        self.textBrowserData.resize(95, 300)
+        self.textBrowserData.move(300, 120)
+        self.textBrowserData.show()
 
     # Show the dialog
     def trainModel(self):
@@ -97,11 +97,16 @@ class TrainDialog(QDialog):
         self.setWindowTitle("Download MNIST and Model Training")
         self.setFixedSize(300, 400)  # TODO Fix size
 
+        # Text edit
+        self.textBrowserTrain = QTextBrowser(self)
+        self.textBrowserTrain.resize(290, 320)
+        self.textBrowserTrain.move(5, 5)
+        # self.lineEdit.append('Hand AI')
+
         # Progress Bar
         self.pbar = QProgressBar(self)
         self.pbar.resize(325, 30)
         self.pbar.move(5, 335)
-        self.textEdit = QTextEdit()
 
         # Train Button
         self.train_btn = QPushButton('Train', self)
@@ -113,6 +118,7 @@ class TrainDialog(QDialog):
         self.cancel_btn = QPushButton('Cancel', self)
         self.cancel_btn.resize(95, 20)
         self.cancel_btn.move(200, 375)
+        self.cancel_btn.clicked.connect(self.close)
 
 
 if (__name__ == '__main__'):
