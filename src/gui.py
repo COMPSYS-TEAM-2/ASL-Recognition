@@ -11,7 +11,7 @@
 
 # Therefore the initial window should have buttons to import data or view the dataset
 import sys
-from PyQt6.QtWidgets import QMainWindow, QApplication, QGridLayout, QPushButton, QLabel, QRadioButton, QFormLayout, QLineEdit, QTextEdit, QComboBox
+from PyQt6.QtWidgets import QMainWindow, QApplication, QPushButton, QLabel, QTextEdit, QComboBox, QDialog, QProgressBar
 from PyQt6.QtGui import *
 from network import Network
 
@@ -30,7 +30,7 @@ class MainWindow(QMainWindow):
 
         # Train Model Action (File)
         trainModelAct = QAction('&Train Model', self)
-        # trainModelAct.triggered.connect(self.showTrainModel)
+        trainModelAct.triggered.connect(self.trainModel)
 
         # View Trained Images (View)
         trainImagesAct = QAction('&View Training Images', self)
@@ -83,6 +83,36 @@ class MainWindow(QMainWindow):
         self.textEdit.resize(95, 300)
         self.textEdit.move(300, 220)
         self.textEdit.show()
+
+    # Show the dialog
+    def trainModel(self):
+        dlg = TrainDialog(self)
+        dlg.exec()
+
+
+class TrainDialog(QDialog):
+    # Dialog to train the database
+    def __init__(self, parent=None):
+        super().__init__(parent=parent)
+        self.setWindowTitle("Download MNIST and Model Training")
+        self.setFixedSize(300, 400)  # TODO Fix size
+
+        # Progress Bar
+        self.pbar = QProgressBar(self)
+        self.pbar.resize(325, 30)
+        self.pbar.move(5, 335)
+        self.textEdit = QTextEdit()
+
+        # Train Button
+        self.train_btn = QPushButton('Train', self)
+        self.train_btn.resize(95, 20)
+        self.train_btn.move(100, 375)
+        # self.train_btn.clicked.connect(self.train_dataset)  # Train the dataset
+
+        # Cancel Button
+        self.cancel_btn = QPushButton('Cancel', self)
+        self.cancel_btn.resize(95, 20)
+        self.cancel_btn.move(200, 375)
 
 
 if (__name__ == '__main__'):
