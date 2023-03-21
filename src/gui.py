@@ -10,82 +10,53 @@
 # User can see simple statistics of the dataset
 
 # Therefore the initial window should have buttons to import data or view the dataset
-import PyQt5.QtWidgets as pyqt
+import sys
+from PyQt6.QtWidgets import QMainWindow, QApplication, QGridLayout, QPushButton, QLabel, QRadioButton, QFormLayout, QLineEdit
+from PyQt6.QtGui import *
 from network import Network
 
 
-class TrainWindow(pyqt.QMainWindow):
-    def __init__(self, parent=None):
-        super().__init__(parent)
-
-        self.setWindowTitle("Training Model Selection")
-        self.setGeometry(350, 150, 400, 400)
-       
-        # TODO Add a selection of radio buttons and a slider
-        # to select which model will be used and how much of
-        # the dataset will be used to train the model
-        selectDataLabel = pyqt.QLabel(self)
-        selectDataLabel.setText("Select the training database")
-        minstRadioButton = pyqt.QRadioButton(self)
-        minstRadioButton.setText("MINST")
-        startTrainButton = pyqt.QPushButton(self)
-        startTrainButton.setText("Train")
-        # X shift, Y shift, Width, Height
-        # startTrainButton.setGeometry(300, 350, 70, 30)
-        # Load the new look of the training gui
-        # self.progress = pyqt.QProgressBar(self)
-        # self.progress.setGeometry(200, 80, 250, 20)
-
-
-class MainWindow(pyqt.QMainWindow):
+class MainWindow(QMainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
 
         # Define the initial setup
         self.setWindowTitle("Sign Language Recognition")
-        self.setGeometry(300, 100, 500, 700)
-        # self.setWindowIcon(self.QIcon(''))
-        self.addMenu()
-        # Add to the main page
-        self.formLayout = pyqt.QFormLayout()
+        self.setGeometry(300, 100, 400, 500)
+        # Quit Action (File)
+        exitAct = QAction('&Quit', self)
+        exitAct.setShortcut('Ctrl+Q')
+        exitAct.triggered.connect(QApplication.quit)
 
-    # Add the menu
+        # Train Model Action (File)
+        trainModelAct = QAction('&Train Model', self)
+        # trainModelAct.triggered.connect(self.showTrainModel)
 
-    def addMenu(self):
-        menuBar = self.menuBar()
-        # Adding menu bar items
-        fileMenu = menuBar.addMenu('File')
-        dataSetMenu = menuBar.addMenu('View')
-        # Add items to the menus
-        fileExitAction = pyqt.QAction("Exit", self)
-        fileExitAction.setShortcut('Ctrl+Q')
-        fileExitAction.triggered.connect(pyqt.qApp.quit)
-        dataSetTrain = pyqt.QAction("Train Model", self)
-        dataSetTrain.triggered.connect(self.openStartTrainWindow)
-        # dataSetTrain.triggered.connect(self.startTrain)
-        dataSetViewTrain = pyqt.QAction("View Training Images", self)
-        dataSetViewTest = pyqt.QAction("View Test Images", self)
-        # Add actions to dropdowns
-        fileMenu.addAction(dataSetTrain)
-        fileMenu.addAction(fileExitAction)
-        dataSetMenu.addAction(dataSetViewTrain)
-        dataSetMenu.addAction(dataSetViewTest)
+        # View Trained Images (View)
+        trainImagesAct = QAction('&View Training Images', self)
+        # trainImagesAct.triggered.connect(self.showTrainImages)
 
-    def openStartTrainWindow(self):
-        # Load the new window
-        self.trainOptionsWindow = TrainWindow()
-        self.trainOptionsWindow.show()
+        # View Test Images (View)
+        testImagesAct = QAction('&View Testing Images', self)
+        # testImagesAct.triggered.connect(self.showTestImages)
 
-        # network = Network()
-        # network.load_model()
+        # Menubar
+        menubar = self.menuBar()
 
-    def updateProgressBar(self, val1, val2):
-        # Update the progress bar to be a percentage of the max training to be completed 5*6400 = 32000
-        self.progress.setValue((val1 * val2)/3200)
+        # File section
+        fileMenu = menubar.addMenu('&File')
+        fileMenu.addAction(trainModelAct)
+        fileMenu.addAction(exitAct)
+
+        # View section
+        viewMenu = menubar.addMenu('&View')
+        viewMenu.addAction(trainImagesAct)
+        viewMenu.addAction(testImagesAct)
+
+        self.show()
 
 
 if (__name__ == '__main__'):
-    application = pyqt.QApplication([])
+    application = QApplication([])
     mainWindow = MainWindow()
-    mainWindow.show()
     application.exec()
