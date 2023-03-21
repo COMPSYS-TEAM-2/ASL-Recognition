@@ -55,6 +55,15 @@ class MainWindow(QMainWindow):
 
         self.show()
 
+        self.init_btn()
+
+    def init_btn(self):
+        btn = QPushButton('Button', self)
+        btn.resize(80, 20)
+        btn.move(300, 30)
+        btn.show()
+        # btn.clicked.connect(self.clear)
+
 
 if (__name__ == '__main__'):
     application = QApplication([])
