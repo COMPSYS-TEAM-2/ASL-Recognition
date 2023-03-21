@@ -11,7 +11,7 @@
 
 # Therefore the initial window should have buttons to import data or view the dataset
 import sys
-from PyQt6.QtWidgets import QMainWindow, QApplication, QGridLayout, QPushButton, QLabel, QRadioButton, QFormLayout, QLineEdit
+from PyQt6.QtWidgets import QMainWindow, QApplication, QGridLayout, QPushButton, QLabel, QRadioButton, QFormLayout, QLineEdit, QTextEdit, QComboBox
 from PyQt6.QtGui import *
 from network import Network
 
@@ -22,7 +22,7 @@ class MainWindow(QMainWindow):
 
         # Define the initial setup
         self.setWindowTitle("Sign Language Recognition")
-        self.setGeometry(300, 100, 400, 500)
+        self.setGeometry(300, 100, 400, 600)
         # Quit Action (File)
         exitAct = QAction('&Quit', self)
         exitAct.setShortcut('Ctrl+Q')
@@ -56,13 +56,33 @@ class MainWindow(QMainWindow):
         self.show()
 
         self.init_btn()
+        self.init_combo_btn()
+        self.init_probabilities()
 
     def init_btn(self):
         btn = QPushButton('Button', self)
-        btn.resize(80, 20)
+        btn.resize(95, 20)
         btn.move(300, 30)
         btn.show()
         # btn.clicked.connect(self.clear)
+
+    def init_combo_btn(self):
+        comboBtn = QComboBox(self)
+        comboBtn.move(300, 55)
+        comboBtn.resize(95, 20)
+        itemsList = ["Model", "MNIST", "OTHER", "HAND AI"]
+        comboBtn.addItems(itemsList)
+        comboBtn.show()
+
+    def init_probabilities(self):
+        label1 = QLabel('Letter Probabilties', self)
+        label1.resize(95, 40)
+        label1.move(300, 180)
+        label1.show()
+        self.textEdit = QTextEdit(self)  # displaying probability widget
+        self.textEdit.resize(95, 300)
+        self.textEdit.move(300, 220)
+        self.textEdit.show()
 
 
 if (__name__ == '__main__'):
