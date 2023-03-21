@@ -18,12 +18,23 @@ class TrainWindow(pyqt.QMainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
 
-        self.setWindowTitle("Training model")
-        self.setGeometry(300, 150, 500, 500)
+        self.setWindowTitle("Training Model Selection")
+        self.setGeometry(350, 150, 400, 400)
+       
+        # TODO Add a selection of radio buttons and a slider
+        # to select which model will be used and how much of
+        # the dataset will be used to train the model
+        selectDataLabel = pyqt.QLabel(self)
+        selectDataLabel.setText("Select the training database")
+        minstRadioButton = pyqt.QRadioButton(self)
+        minstRadioButton.setText("MINST")
+        startTrainButton = pyqt.QPushButton(self)
+        startTrainButton.setText("Train")
+        # X shift, Y shift, Width, Height
+        # startTrainButton.setGeometry(300, 350, 70, 30)
         # Load the new look of the training gui
-        self.progress = pyqt.QProgressBar(self)
-        self.progress.setGeometry(200, 80, 250, 20)
-        self.formLayout = pyqt.QFormLayout()
+        # self.progress = pyqt.QProgressBar(self)
+        # self.progress.setGeometry(200, 80, 250, 20)
 
 
 class MainWindow(pyqt.QMainWindow):
@@ -50,7 +61,7 @@ class MainWindow(pyqt.QMainWindow):
         fileExitAction.setShortcut('Ctrl+Q')
         fileExitAction.triggered.connect(pyqt.qApp.quit)
         dataSetTrain = pyqt.QAction("Train Model", self)
-        dataSetTrain.triggered.connect(self.startTrain)
+        dataSetTrain.triggered.connect(self.openStartTrainWindow)
         # dataSetTrain.triggered.connect(self.startTrain)
         dataSetViewTrain = pyqt.QAction("View Training Images", self)
         dataSetViewTest = pyqt.QAction("View Test Images", self)
@@ -60,10 +71,10 @@ class MainWindow(pyqt.QMainWindow):
         dataSetMenu.addAction(dataSetViewTrain)
         dataSetMenu.addAction(dataSetViewTest)
 
-    def startTrain(self):
+    def openStartTrainWindow(self):
         # Load the new window
-        self.trainWindow = TrainWindow()
-        self.trainWindow.show()
+        self.trainOptionsWindow = TrainWindow()
+        self.trainOptionsWindow.show()
 
         # network = Network()
         # network.load_model()
