@@ -10,80 +10,111 @@
 # User can see simple statistics of the dataset
 
 # Therefore the initial window should have buttons to import data or view the dataset
-from PyQt6.QtCore import Qt
-from PyQt6.QtWidgets import (
-    QMainWindow,
-    QGridLayout,
-    QPushButton,
-    QLabel,
-    QRadioButton,
-    QFormLayout,
-    QLineEdit,
-    QApplication,
-    QGridLayout,
-    QLineEdit,
-    QMainWindow,
-    QPushButton,
-    QVBoxLayout,
-    QWidget,
-)
+from PyQt6.QtWidgets import QMainWindow, QApplication, QPushButton, QLabel, QLineEdit, QComboBox, QDialog, QProgressBar, QTextBrowser
 from PyQt6.QtGui import *
-
-WINDOW_SIZE = 235
-DISPLAY_HEIGHT = 35
-BUTTON_SIZE = 40
-
-ERROR_MSG = "ERROR"
 
 
 class Window(QMainWindow):
-    """PyCalc's main window (GUI or view)."""
+    def __init__(self, parent=None):
+        super().__init__(parent)
 
-    def __init__(self):
-        super().__init__()
-        self.setWindowTitle("PyCalc")
-        self.setFixedSize(WINDOW_SIZE, WINDOW_SIZE)
-        self.generalLayout = QVBoxLayout()
-        centralWidget = QWidget(self)
-        centralWidget.setLayout(self.generalLayout)
-        self.setCentralWidget(centralWidget)
-        self._createDisplay()
-        self._createButtons()
+        # Define the initial setup
+        self.setWindowTitle("Sign Language Recognition")
+        self.setGeometry(300, 100, 400, 500)
+        # Quit Action (File)
+        exitAct = QAction('&Quit', self)
+        exitAct.setShortcut('Ctrl+Q')
+        exitAct.triggered.connect(QApplication.quit)
 
-    def _createDisplay(self):
-        self.display = QLineEdit()
-        self.display.setFixedHeight(DISPLAY_HEIGHT)
-        self.display.setAlignment(Qt.AlignmentFlag.AlignRight)
-        self.display.setReadOnly(True)
-        self.generalLayout.addWidget(self.display)
+        # Train Model Action (File)
+        trainModelAct = QAction('&Train Model', self)
+        trainModelAct.triggered.connect(self.trainModel)
 
-    def _createButtons(self):
-        self.buttonMap = {}
-        buttonsLayout = QGridLayout()
-        keyBoard = [
-            ["7", "8", "9", "/", "C"],
-            ["4", "5", "6", "*", "("],
-            ["1", "2", "3", "-", ")"],
-            ["0", "00", ".", "+", "="],
-        ]
+        # View Trained Images (View)
+        trainImagesAct = QAction('&View Training Images', self)
+        # trainImagesAct.triggered.connect(self.showTrainImages)
 
-        for row, keys in enumerate(keyBoard):
-            for col, key in enumerate(keys):
-                self.buttonMap[key] = QPushButton(key)
-                self.buttonMap[key].setFixedSize(BUTTON_SIZE, BUTTON_SIZE)
-                buttonsLayout.addWidget(self.buttonMap[key], row, col)
+        # View Test Images (View)
+        testImagesAct = QAction('&View Testing Images', self)
+        # testImagesAct.triggered.connect(self.showTestImages)
 
-        self.generalLayout.addLayout(buttonsLayout)
+        # Menubar
+        menubar = self.menuBar()
 
-    def setDisplayText(self, text):
-        """Set the display's text."""
-        self.display.setText(text)
-        self.display.setFocus()
+        # File section
+        fileMenu = menubar.addMenu('&File')
+        fileMenu.addAction(trainModelAct)
+        fileMenu.addAction(exitAct)
 
-    def displayText(self):
-        """Get the display's text."""
-        return self.display.text()
+        # View section
+        viewMenu = menubar.addMenu('&View')
+        viewMenu.addAction(trainImagesAct)
+        viewMenu.addAction(testImagesAct)
 
-    def clearDisplay(self):
-        """Clear the display."""
-        self.setDisplayText("")
+        self.show()
+
+        self.init_btn()
+        self.init_combo_btn()
+        self.init_probabilities()
+
+    def init_btn(self):
+        btn = QPushButton('Take photo', self)
+        btn.resize(95, 20)
+        btn.move(300, 30)
+        btn.show()
+        # btn.clicked.connect(self.clear)
+
+    def init_combo_btn(self):
+        comboBtn = QComboBox(self)
+        comboBtn.move(300, 55)
+        comboBtn.resize(95, 20)
+        itemsList = ["Model", "MNIST", "OTHER", "HAND AI"]
+        comboBtn.addItems(itemsList)
+        comboBtn.show()
+
+    def init_probabilities(self):
+        label1 = QLabel('Letter Probabilties', self)
+        label1.resize(95, 40)
+        label1.move(300, 80)
+        label1.show()
+        self.textBrowserData = QTextBrowser(
+            self)  # displaying probability widget
+        self.textBrowserData.resize(95, 300)
+        self.textBrowserData.move(300, 120)
+        self.textBrowserData.show()
+
+    # Show the dialog
+    def trainModel(self):
+        dlg = TrainDialog(self)
+        dlg.exec()
+
+
+class TrainDialog(QDialog):
+    # Dialog to train the database
+    def __init__(self, parent=None):
+        super().__init__(parent=parent)
+        self.setWindowTitle("Download MNIST and Model Training")
+        self.setFixedSize(300, 400)  # TODO Fix size
+
+        # Text edit
+        self.textBrowserTrain = QTextBrowser(self)
+        self.textBrowserTrain.resize(290, 320)
+        self.textBrowserTrain.move(5, 5)
+        # self.lineEdit.append('Hand AI')
+
+        # Progress Bar
+        self.pbar = QProgressBar(self)
+        self.pbar.resize(325, 30)
+        self.pbar.move(5, 335)
+
+        # Train Button
+        self.train_btn = QPushButton('Train', self)
+        self.train_btn.resize(95, 20)
+        self.train_btn.move(100, 375)
+        # self.train_btn.clicked.connect(self.train_dataset)  # Train the dataset
+
+        # Cancel Button
+        self.cancel_btn = QPushButton('Cancel', self)
+        self.cancel_btn.resize(95, 20)
+        self.cancel_btn.move(200, 375)
+        self.cancel_btn.clicked.connect(self.close)
