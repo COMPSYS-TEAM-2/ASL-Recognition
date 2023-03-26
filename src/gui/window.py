@@ -11,6 +11,8 @@
 
 # Therefore the initial window should have buttons to import data or view the dataset
 from PyQt6.QtWidgets import QMainWindow, QApplication, QPushButton, QLabel, QLineEdit, QComboBox, QDialog, QProgressBar, QTextBrowser
+from PyQt6.QtMultimedia import QMediaDevices, QCamera, QCameraDevice, QMediaCaptureSession, QImageCapture
+from PyQt6.QtMultimediaWidgets import QVideoWidget
 from PyQt6.QtGui import *
 
 
@@ -54,6 +56,7 @@ class Window(QMainWindow):
         self.init_btn()
         self.init_combo_btn()
         self.init_probabilities()
+        self.init_camera()
 
         self.show()
 
@@ -82,6 +85,24 @@ class Window(QMainWindow):
         self.textBrowserData.resize(95, 300)
         self.textBrowserData.move(300, 120)
         self.textBrowserData.show()
+
+    def init_camera(self):
+        self.availableCameras = QMediaDevices.videoInputs()
+        if not self.availableCameras:
+            print("No available cameras")
+
+        camera = QCamera(self.availableCameras[0])
+        self.captureSession = QMediaCaptureSession()
+        self.captureSession.setCamera(camera)
+
+        preview = QVideoWidget()
+        preview.show()
+        self.captureSession.setVideoOutput(preview)
+
+        imageCapture = QImageCapture(camera)
+        self.captureSession.setImageCapture(imageCapture)
+
+        camera.start()
 
     # Show the dialog
     def trainModel(self):
