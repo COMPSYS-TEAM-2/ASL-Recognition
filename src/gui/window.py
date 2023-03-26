@@ -51,11 +51,11 @@ class Window(QMainWindow):
         viewMenu.addAction(trainImagesAct)
         viewMenu.addAction(testImagesAct)
 
-        self.show()
-
         self.init_btn()
         self.init_combo_btn()
         self.init_probabilities()
+
+        self.show()
 
     def init_btn(self):
         btn = QPushButton('Take photo', self)

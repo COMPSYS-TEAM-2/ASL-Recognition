@@ -8,10 +8,8 @@ from gui.palette import set_palette
 
 def main():
     app = QApplication([])
-    app.setStyle("Fusion")
     set_palette(app)
     window = Window()
-    window.show()
     Controller(window)
     sys.exit(app.exec())
 
