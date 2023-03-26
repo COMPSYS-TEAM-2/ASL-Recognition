@@ -1,20 +1,16 @@
-import os
-import torch
-from image import prepare_image
-from network import Network
-import matplotlib.pyplot as plt
+
+import sys
+from PyQt6.QtWidgets import QApplication
+from controller import Controller
+from gui.window import Window
 
 
 def main():
-    network = Network()
-    network.load_model()
-    network.test_all()
-    image = prepare_image("data/asl/O.png")
-    result = network.test(image)
-    _, predicted = torch.max(result, 1)
-    print(result, chr(predicted + ord('A')))
-    plt.imshow(image[0], cmap='gray')
-    plt.show()
+    app = QApplication([])
+    window = Window()
+    window.show()
+    Controller(window)
+    sys.exit(app.exec())
 
 
 if __name__ == "__main__":

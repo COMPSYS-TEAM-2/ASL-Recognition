@@ -5,9 +5,9 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import DataLoader
-from mnist import MNIST
+from neuralnet.mnist import MNIST
 
-from model import Model
+from neuralnet.models.model import Model
 
 
 class Network():
