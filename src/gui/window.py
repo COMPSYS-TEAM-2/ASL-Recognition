@@ -61,11 +61,10 @@ class Window(QMainWindow):
         self.show()
 
     def init_btn(self):
-        btn = QPushButton('Take photo', self)
-        btn.resize(95, 20)
-        btn.move(300, 30)
-        btn.show()
-        # btn.clicked.connect(self.clear)
+        self.takePhotoBtn = QPushButton('Take photo', self)
+        self.takePhotoBtn.resize(95, 20)
+        self.takePhotoBtn.move(300, 30)
+        self.takePhotoBtn.show()
 
     def init_combo_btn(self):
         comboBtn = QComboBox(self)
@@ -91,12 +90,15 @@ class Window(QMainWindow):
         if not self.availableCameras:
             print("No available cameras")
 
-        camera = QCamera(self.availableCameras[0])
-        self.captureSession = QMediaCaptureSession()
+        camera = QCamera(self.availableCameras[0], self)
+        self.captureSession = QMediaCaptureSession(self)
         self.captureSession.setCamera(camera)
 
-        preview = QVideoWidget()
+        preview = QVideoWidget(self)
+        preview.resize(280, 160)
+        preview.move(10, 170)
         preview.show()
+
         self.captureSession.setVideoOutput(preview)
 
         imageCapture = QImageCapture(camera)

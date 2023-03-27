@@ -9,8 +9,7 @@ from gui.palette import set_palette
 def main():
     app = QApplication([])
     set_palette(app)
-    window = Window()
-    Controller(window)
+    controller = Controller()
     sys.exit(app.exec())
 
 
