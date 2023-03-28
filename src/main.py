@@ -2,14 +2,13 @@
 import sys
 from PyQt5.QtWidgets import QApplication
 from controller import Controller
-from gui.window import Window
 from gui.palette import set_palette
 
 
 def main():
     app = QApplication([])
     set_palette(app)
-    controller = Controller()
+    _ = Controller()
     sys.exit(app.exec())
 
 

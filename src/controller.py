@@ -7,11 +7,10 @@ class Controller:
     def __init__(self):
         self._network = Network()
         self._window = Window()
-        self._initButtons()
+        # self._initButtons()
 
     def _initButtons(self):
         self._window.takePhotoBtn.clicked.connect(self._takePhoto)
-        print("bind")
 
     def _takePhoto(self):
         print("Click")
