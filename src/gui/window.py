@@ -10,10 +10,10 @@
 # User can see simple statistics of the dataset
 
 # Therefore the initial window should have buttons to import data or view the dataset
-from PyQt6.QtWidgets import QMainWindow, QApplication, QPushButton, QLabel, QLineEdit, QComboBox, QDialog, QProgressBar, QTextBrowser
-from PyQt6.QtMultimedia import QMediaDevices, QCamera, QCameraDevice, QMediaCaptureSession, QImageCapture
-from PyQt6.QtMultimediaWidgets import QVideoWidget
-from PyQt6.QtGui import *
+from PyQt5.QtWidgets import QMainWindow, QApplication, QPushButton, QLabel, QAction, QComboBox, QDialog, QProgressBar, QTextBrowser
+from PyQt5.QtMultimedia import *
+from PyQt5.QtMultimediaWidgets import *
+from PyQt5.QtGui import *
 
 
 class Window(QMainWindow):
@@ -77,25 +77,7 @@ class Window(QMainWindow):
         self.textBrowserData.show()
 
     def init_camera(self):
-        self.availableCameras = QMediaDevices.videoInputs()
-        if not self.availableCameras:
-            print("No available cameras")
-
-        camera = QCamera(self.availableCameras[0], self)
-        self.captureSession = QMediaCaptureSession(self)
-        self.captureSession.setCamera(camera)
-
-        preview = QVideoWidget(self)
-        preview.resize(290, 470)
-        preview.move(5, 25)
-        preview.show()
-
-        self.captureSession.setVideoOutput(preview)
-
-        imageCapture = QImageCapture(camera)
-        self.captureSession.setImageCapture(imageCapture)
-
-        camera.start()
+        pass
 
     # Show the dialog
     def trainModel(self):
@@ -139,6 +121,7 @@ class TrainDialog(QDialog):
         self.cancel_btn.resize(95, 20)
         self.cancel_btn.move(200, 375)
         self.cancel_btn.clicked.connect(self.close)
+
 
 class viewDialog(QDialog):
     # Dialog to view the images

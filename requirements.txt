@@ -1,4 +1,4 @@
-PyQt6 >= 5
+PyQt5 >= 5
 torch >= 1.13
 torchvision >= 0.14
 matplotlib >= 3.7
