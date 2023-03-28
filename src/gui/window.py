@@ -54,7 +54,6 @@ class Window(QMainWindow):
         viewMenu.addAction(testImagesAct)
 
         self.init_btn()
-        self.init_combo_btn()
         self.init_probabilities()
         self.init_camera()
 
@@ -63,26 +62,18 @@ class Window(QMainWindow):
     def init_btn(self):
         self.takePhotoBtn = QPushButton('Take photo', self)
         self.takePhotoBtn.resize(95, 20)
-        self.takePhotoBtn.move(300, 30)
+        self.takePhotoBtn.move(300, 25)
         self.takePhotoBtn.show()
-
-    def init_combo_btn(self):
-        comboBtn = QComboBox(self)
-        comboBtn.move(300, 55)
-        comboBtn.resize(95, 20)
-        itemsList = ["Model", "MNIST", "OTHER", "HAND AI"]
-        comboBtn.addItems(itemsList)
-        comboBtn.show()
 
     def init_probabilities(self):
         label1 = QLabel('Letter Probabilties', self)
         label1.resize(95, 40)
-        label1.move(300, 80)
+        label1.move(300, 40)
         label1.show()
         self.textBrowserData = QTextBrowser(
             self)  # displaying probability widget
         self.textBrowserData.resize(95, 300)
-        self.textBrowserData.move(300, 120)
+        self.textBrowserData.move(300, 75)
         self.textBrowserData.show()
 
     def init_camera(self):
@@ -95,8 +86,8 @@ class Window(QMainWindow):
         self.captureSession.setCamera(camera)
 
         preview = QVideoWidget(self)
-        preview.resize(280, 160)
-        preview.move(10, 170)
+        preview.resize(290, 470)
+        preview.move(5, 25)
         preview.show()
 
         self.captureSession.setVideoOutput(preview)
@@ -123,12 +114,19 @@ class TrainDialog(QDialog):
         self.textBrowserTrain = QTextBrowser(self)
         self.textBrowserTrain.resize(290, 320)
         self.textBrowserTrain.move(5, 5)
-        # self.lineEdit.append('Hand AI')
 
         # Progress Bar
         self.pbar = QProgressBar(self)
-        self.pbar.resize(325, 30)
+        self.pbar.resize(290, 30)
         self.pbar.move(5, 335)
+
+        # Combo button
+        self.comboBtn = QComboBox(self)
+        self.comboBtn.move(5, 375)
+        self.comboBtn.resize(90, 20)
+        itemsList = ["Model", "MNIST", "OTHER", "HAND AI"]
+        self.comboBtn.addItems(itemsList)
+        self.comboBtn.show()
 
         # Train Button
         self.train_btn = QPushButton('Train', self)
@@ -141,3 +139,8 @@ class TrainDialog(QDialog):
         self.cancel_btn.resize(95, 20)
         self.cancel_btn.move(200, 375)
         self.cancel_btn.clicked.connect(self.close)
+
+class viewDialog(QDialog):
+    # Dialog to view the images
+    def __init__(self, parent=None):
+        pass
