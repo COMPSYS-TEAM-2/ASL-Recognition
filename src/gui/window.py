@@ -81,7 +81,8 @@ class Window(QMainWindow):
         self.mainLayout.addWidget(QTextBrowser(), 1, 10, 9, 2)
 
     def initCamera(self):
-        self.mainLayout.addWidget(Camera(), 0, 0, 10, 10)
+        self.camera = Camera()
+        self.mainLayout.addWidget(self.camera, 0, 0, 10, 10)
 
     # Show the dialog
     def trainModel(self):
