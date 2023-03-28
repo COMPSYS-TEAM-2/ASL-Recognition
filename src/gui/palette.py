@@ -7,7 +7,7 @@ def set_palette(app):
     app.setStyle("Fusion")
     palette = QPalette()
     palette.setColor(QPalette.ColorRole.Window, QColor(53, 53, 53))
-    palette.setColor(QPalette.ColorRole.WindowText, Qt.GlobalColor.red)
+    palette.setColor(QPalette.ColorRole.WindowText, QColor(235, 171, 52))
     palette.setColor(QPalette.ColorRole.Base, QColor(25, 25, 25))
     palette.setColor(QPalette.ColorRole.AlternateBase, QColor(53, 53, 53))
     palette.setColor(QPalette.ColorRole.ToolTipBase, Qt.GlobalColor.white)
