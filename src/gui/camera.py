@@ -35,9 +35,7 @@ class Camera(QWidget):
         self.captureSession.setCamera(camera)
 
         preview = QVideoWidget(self)
-        preview.resize(290, 470)
-        preview.move(5, 25)
-        self.layout().addWidget(preview, 1, 1, Qt.AlignmentFlag.AlignCenter)
+        self.layout().addWidget(preview, 1, 1)
 
         self.captureSession.setVideoOutput(preview)
 
