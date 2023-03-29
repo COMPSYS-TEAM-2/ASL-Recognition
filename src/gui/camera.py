@@ -36,7 +36,7 @@ class Camera(QWidget):
         self.captureSession.setCamera(camera)
 
         preview = QVideoWidget(self)
-        
+
         self.layout().addWidget(preview, 1, 1)
 
         self.captureSession.setVideoOutput(preview)

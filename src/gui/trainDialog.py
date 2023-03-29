@@ -1,5 +1,6 @@
 # Therefore the initial window should have buttons to import data or view the dataset
-from PyQt5.QtWidgets import QPushButton, QComboBox, QDialog, QProgressBar, QTextBrowser
+from PyQt6.QtWidgets import QPushButton, QComboBox, QDialog, QProgressBar, QTextBrowser
+
 
 class TrainDialog(QDialog):
     # Dialog to train the database

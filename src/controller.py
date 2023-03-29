@@ -13,12 +13,14 @@ class Controller:
 
     def _initButtons(self):
         self._window.takePhotoBtn.clicked.connect(self._takePhoto)
-        self._window.camera.captureSession.imageCapture(
+        if (self._window.camera.availableCameras):
+            self._window.camera.captureSession.imageCapture(
         ).imageCaptured.connect(self._handleCapture)
+        
 
     def _takePhoto(self):
         try:
-                    id = self._window.camera.captureSession.imageCapture().capture()
+            self._window.camera.captureSession.imageCapture().capture()
         except AttributeError:
             print("No Camera")
 
