@@ -1,6 +1,6 @@
 
 import sys
-from PyQt5.QtWidgets import QApplication
+from PyQt6.QtWidgets import QApplication
 from controller import Controller
 from gui.palette import set_palette
 

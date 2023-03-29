@@ -10,9 +10,9 @@
 # User can see simple statistics of the dataset
 
 # Therefore the initial window should have buttons to import data or view the dataset
-from PyQt5.QtWidgets import QMainWindow, QApplication, QPushButton, QLabel, QAction,QTextBrowser, QGridLayout, QWidget
-from PyQt5.QtCore import Qt
-
+from PyQt6.QtWidgets import QMainWindow, QApplication, QPushButton, QLabel,QTextBrowser, QGridLayout, QWidget
+from PyQt6.QtCore import Qt
+from PyQt6.QtGui import QAction
 from gui.camera import Camera
 from gui.trainDialog import TrainDialog
 

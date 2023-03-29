@@ -1,8 +1,8 @@
-from PyQt5.QtWidgets import QLabel, QGridLayout, QWidget
-from PyQt5.QtMultimedia import QCameraInfo, QCamera, QCameraImageCapture
-from PyQt5.QtMultimediaWidgets import QCameraViewfinder
-from PyQt5.QtGui import QPalette, QColor
-from PyQt5.QtCore import Qt
+from PyQt6.QtWidgets import QLabel, QWidget, QGridLayout
+from PyQt6.QtMultimedia import QMediaDevices, QCamera, QCameraDevice, QMediaCaptureSession, QImageCapture
+from PyQt6.QtMultimediaWidgets import QVideoWidget
+from PyQt6.QtGui import QPalette, QColor
+from PyQt6.QtCore import Qt
 
 
 class Camera(QWidget):
@@ -24,42 +24,24 @@ class Camera(QWidget):
         self.setPalette(palette)
 
     def initCamera(self):
-        # getting available cameras
-        self.availableCameras = QCameraInfo.availableCameras()
-
-        # if no camera found
+        self.availableCameras = QMediaDevices.videoInputs()
         if not self.availableCameras:
             label = QLabel('No Camera Detected')
             self.layout().addWidget(label, 1, 1, Qt.AlignmentFlag.AlignCenter)
             return
 
-        self.viewfinder = QCameraViewfinder(self)
-        self.layout().addWidget(self.viewfinder, 1, 1, Qt.AlignmentFlag.AlignCenter)
+        camera = QCamera(self.availableCameras[0], self)
+        self.captureSession = QMediaCaptureSession(self)
+        self.captureSession.setCamera(camera)
 
-    # method to select camera
-    def select_camera(self, i):
+        preview = QVideoWidget(self)
+        preview.resize(290, 470)
+        preview.move(5, 25)
+        self.layout().addWidget(preview, 1, 1, Qt.AlignmentFlag.AlignCenter)
 
-        # getting the selected camera
-        self.camera = QCamera(self.availableCameras[i])
+        self.captureSession.setVideoOutput(preview)
 
-        # setting view finder to the camera
-        self.camera.setViewfinder(self.viewfinder)
+        imageCapture = QImageCapture(camera)
+        self.captureSession.setImageCapture(imageCapture)
 
-        # setting capture mode to the camera
-        self.camera.setCaptureMode(QCamera.CaptureMode.CaptureStillImage)
-
-        # if any error occur show the alert
-        self.camera.error.connect(
-            lambda: self.alert(self.camera.errorString()))
-
-        # start the camera
-        self.camera.start()
-
-        # creating a QCameraImageCapture object
-        self.capture = QCameraImageCapture(self.camera)
-
-        # getting current camera name
-        self.current_camera_name = self.availableCameras[i]
-
-        # initial save sequence
-        self.save_seq = 0
+        camera.start()

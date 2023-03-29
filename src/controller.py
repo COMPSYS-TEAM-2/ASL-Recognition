@@ -15,9 +15,10 @@ class Controller:
 
     def _takePhoto(self):
         print("Click")
-        timestamp = time.strftime("%d-%b-%Y-%H_%M_%S")
         try:
-            self._window.camera.capture.capture(f"output/photos/{timestamp}.jpg")
+                    id = self._window.camera.captureSession.imageCapture().capture()
+                    self._window.camera.captureSession.imageCapture().imageCaptured.connect(lambda: print("test"))
+                    print(id)
         except AttributeError:
             print("No Camera")
 
