@@ -75,8 +75,16 @@ class Controller:
         return FloatTensor(pixels_normalized).view(1, 28, 28)
             
     def PredictImage(self, image):
-        self._network.load_model()
-        result = self._network.test(image)
-        _, prediction = max(result, 1)
-        return chr(prediction + ord('A'))
+        # self._network.load_model()
+        # result = self._network.test(image)
+        # _, prediction = max(result, 1)
+        # return chr(prediction + ord('A'))
+        try:
+            self._network.load_model()
+        except:
+            print("Model Load Failure!")
+            # Open the dialog
+            self._window.errorMessageDlg()
+
+        return "Error"
          

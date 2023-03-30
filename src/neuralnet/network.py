@@ -93,10 +93,5 @@ class Network():
         # Loads the model under the given name.
         # If there are errors it will train the model
         # Default name is "model"
-        try:
-            self.model.load_state_dict(
-                torch.load(f"output/models/{name}.pth"))
-            print("Model Load Success!")
-        except:
-            print("Model Load Failure!\nTraining Model")
-            self.train()
+        self.model.load_state_dict(
+            torch.load(f"output/models/{name}.pth"))
