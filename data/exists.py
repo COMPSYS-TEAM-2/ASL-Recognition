@@ -1,3 +1,3 @@
 import os
 
-print(os.path.exists("/data/american_sign_language.jpg"))
+print(os.path.exists("./american_sign_language.PNG"))
