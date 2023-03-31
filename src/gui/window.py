@@ -16,6 +16,7 @@ from PyQt6.QtGui import QAction
 from gui.camera import Camera
 from gui.trainDialog import TrainDialog
 from gui.errorDialog import ErrorDialog
+from gui.trainImagesDialog import TrainImagesDialog
 
 
 class Window(QMainWindow):
@@ -50,8 +51,8 @@ class Window(QMainWindow):
         trainModelAct.triggered.connect(self.trainModel)
 
         # # View Trained Images (View)
-        # trainImagesAct = QAction('&View Training Images', self)
-        # # trainImagesAct.triggered.connect(self.showTrainImages)
+        trainImagesAct = QAction('&View Training Images', self)
+        trainImagesAct.triggered.connect(self.showTrainImages)
 
         # # View Test Images (View)
         # testImagesAct = QAction('&View Testing Images', self)
@@ -67,7 +68,7 @@ class Window(QMainWindow):
 
         # View section
         viewMenu = menubar.addMenu('&View')
-        # viewMenu.addAction(trainImagesAct)
+        viewMenu.addAction(trainImagesAct)
         # viewMenu.addAction(testImagesAct)
 
     def initButton(self):
@@ -84,6 +85,9 @@ class Window(QMainWindow):
     def initCamera(self):
         self.camera = Camera()
         self.mainLayout.addWidget(self.camera, 0, 0, 10, 10)
+
+    def showTrainImages(self):
+        dlg = TrainImagesDialog(self)
 
     # Show the dialog
     def trainModel(self):
