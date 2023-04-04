@@ -11,7 +11,7 @@ class TrainImagesDialog(QDialog):
         self.setWindowTitle("View Training Images")
 
         self.scrollArea = QScrollArea(widgetResizable=True)
-        self.scrollArea.setVerticalScrollBar(Qt.ScrollBarAlwaysOn)
+        self.scrollArea.setVerticalScrollBar()
         self.mainLayout = QGridLayout()
         self.scrollLayout = QGridLayout()
         self.scrollArea.setLayout(self.scrollLayout)
