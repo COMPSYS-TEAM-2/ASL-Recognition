@@ -17,6 +17,7 @@ from gui.camera import Camera
 from gui.trainDialog import TrainDialog
 from gui.errorDialog import ErrorDialog
 from gui.trainImagesDialog import TrainImagesDialog
+from gui.testImagesDialog import TestImagesDialog
 
 
 class Window(QMainWindow):
@@ -55,8 +56,8 @@ class Window(QMainWindow):
         trainImagesAct.triggered.connect(self.showTrainImages)
 
         # # View Test Images (View)
-        # testImagesAct = QAction('&View Testing Images', self)
-        # # testImagesAct.triggered.connect(self.showTestImages)
+        testImagesAct = QAction('&View Testing Images', self)
+        testImagesAct.triggered.connect(self.showTestImages)
 
         # Menubar
         menubar = self.menuBar()
@@ -69,7 +70,7 @@ class Window(QMainWindow):
         # View section
         viewMenu = menubar.addMenu('&View')
         viewMenu.addAction(trainImagesAct)
-        # viewMenu.addAction(testImagesAct)
+        viewMenu.addAction(testImagesAct)
 
     def initButton(self):
         self.takePhotoBtn = QPushButton('Take photo')
@@ -88,6 +89,9 @@ class Window(QMainWindow):
 
     def showTrainImages(self):
         dlg = TrainImagesDialog(self)
+
+    def showTestImages(self):
+        dlg = TestImagesDialog(self)
 
     # Show the dialog
     def trainModel(self):
