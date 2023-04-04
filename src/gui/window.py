@@ -16,6 +16,7 @@ from PyQt6.QtGui import QAction
 from gui.camera import Camera
 from gui.trainDialog import TrainDialog
 from gui.errorDialog import ErrorDialog
+from gui.trainingPrgBar import TrainingPrgBar
 
 
 class Window(QMainWindow):
@@ -30,6 +31,7 @@ class Window(QMainWindow):
         self.initCamera()
         self.initButton()
         self.initProbabilities()
+      
 
         self.show()
 
@@ -74,6 +76,7 @@ class Window(QMainWindow):
         self.takePhotoBtn = QPushButton('Take photo')
         self.mainLayout.addWidget(
             self.takePhotoBtn, 0, 10, 1, 2, Qt.AlignmentFlag.AlignTop)
+        
 
     def initProbabilities(self):
         label = QLabel('Letter Probabilties')
@@ -89,6 +92,9 @@ class Window(QMainWindow):
     def trainModel(self):
         dlg = TrainDialog(self)
         dlg.exec()
+
+    
+        
 
     def errorMessageDlg(self):
         dlg = ErrorDialog(self)
