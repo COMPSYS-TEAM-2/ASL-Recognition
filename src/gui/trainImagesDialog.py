@@ -1,7 +1,5 @@
-from PyQt6.QtWidgets import QDialog, QLabel, QGridLayout, QScrollArea, QScrollBar
-from PyQt6.QtCore import Qt
+from PyQt6.QtWidgets import QDialog, QLabel, QGridLayout, QScrollArea, QFormLayout, QGroupBox
 from PyQt6.QtGui import QPixmap
-import os
 
 
 class TrainImagesDialog(QDialog):
@@ -9,16 +7,28 @@ class TrainImagesDialog(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         self.setWindowTitle("View Training Images")
-
+        self.setGeometry(0, 0, 950, 500)
         self.scrollArea = QScrollArea(widgetResizable=True)
-        self.scrollArea.setVerticalScrollBar()
-        self.mainLayout = QGridLayout()
-        self.scrollLayout = QGridLayout()
-        self.scrollArea.setLayout(self.scrollLayout)
-        self.mainLayout.addWidget(self.scrollArea)
+        self.scrollLayout = QFormLayout()
+
+        groupBox = QGroupBox()
+        groupBox.setLayout(self.scrollLayout)
+
         self.myPixmap = QPixmap("./data/american_sign_language.PNG")
         self.pixmapLabel = QLabel()
         self.pixmapLabel.setPixmap(self.myPixmap)
-        self.scrollLayout.addWidget(self.pixmapLabel, 0, 0)
+        self.scrollLayout.addRow(self.pixmapLabel)
+        self.labelName = QLabel("MINST Training set")
+        self.scrollLayout.addRow(self.labelName)
+        self.myPixmap = QPixmap("./data/american_sign_language.PNG")
+        self.pixmapLabel = QLabel()
+        self.pixmapLabel.setPixmap(self.myPixmap)
+        self.scrollLayout.addRow(self.pixmapLabel)
+        self.labelName = QLabel("MINST Training set")
+        self.scrollLayout.addRow(self.labelName)
+
+        self.scrollArea.setWidget(groupBox)
+        self.mainLayout = QGridLayout()
+        self.mainLayout.addWidget(self.scrollArea)
         self.setLayout(self.mainLayout)
         self.show()
