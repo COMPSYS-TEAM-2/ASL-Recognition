@@ -1,27 +1,31 @@
 import sys
 from PyQt6.QtWidgets import QWidget, QPushButton, QDialog, QLabel, QGridLayout, QProgressBar
 from PyQt6.QtCore import Qt
+import time
 
+class Actions(QDialog):
 
-class TrainingPrgBar(QDialog):
-    # Dialog to train the database
-    def __init__(self, parent=None):
-        super().__init__(parent=parent)
-
-        self.setWindowTitle("Training Progress...")
-
-        self.mainLayout = QGridLayout()
-
-        self.progBar = QProgressBar()
-        self.mainLayout.addWidget(
-            self.progBar, 0, 0, 1, 0, Qt.AlignmentFlag.AlignCenter)
-        self.cancelButton = QPushButton("Cancel")
-        self.cancelButton.clicked.connect(self.close)
-        self.mainLayout.addWidget(
-            self.cancelButton, 1, 0, 1, 0, Qt.AlignmentFlag.AlignCenter)
-        self.setLayout(self.mainLayout)
+    def __init__(self):
+        super().__init__()
+        self.showPbar()
+        
+    def showPbar(self):
+        self.setWindowTitle('Progress Bar')
+        self.progress = QProgressBar(self)
+        self.progress.setGeometry(0, 0, 300, 25)
+        self.progress.setMaximum(100)
+        self.button = QPushButton('Start', self)
+        self.button.move(0, 30)
         self.show()
 
+        self.button.clicked.connect(self.onButtonClick)
+
+    def onButtonClick(self):
+        count = 0
+        while count < 200:
+            count += 1
+            time.sleep(1)
+            self.progress.setValue(count)
  
 
         

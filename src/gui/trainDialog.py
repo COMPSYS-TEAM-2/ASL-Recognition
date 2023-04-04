@@ -1,5 +1,5 @@
 # Therefore the initial window should have buttons to import data or view the dataset
-from PyQt6.QtWidgets import QPushButton, QComboBox, QDialog, QProgressBar, QTextBrowser,QMessageBox,QLayout
+from PyQt6.QtWidgets import QPushButton, QComboBox, QDialog, QProgressBar, QTextBrowser,QMessageBox,QVBoxLayout
 from gui.trainingPrgBar import *
 
 
@@ -43,12 +43,30 @@ class TrainDialog(QDialog):
         self.cancel_btn.move(200, 375)
         self.cancel_btn.clicked.connect(self.close)
 
-    def show_popUp(self):
-        test_message = QMessageBox()
-        test_message.setWindowTitle("Training Progress")
+   
+    
+    def showPbar(self):
 
-        x = test_message.exec()
-        
+        self.setWindowTitle('Progress Bar')
+        self.progress = QProgressBar(self)
+        self.progress.setGeometry(0, 0, 300, 25)
+        self.progress.setMaximum(100)
+        self.button = QPushButton('Start', self)
+        self.button.move(0, 30)
+
+        self.show()
+
+        self.button.clicked.connect(self.onButtonClick)
+
+    def onButtonClick(self):
+        count = 0
+        while count < 200:
+            count += 1
+            time.sleep(1)
+            self.progress.setValue(count)
+
+    def show_popUp(self):
+        self.showPbar()
 
 
 
