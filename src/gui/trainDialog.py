@@ -53,6 +53,15 @@ class TrainDialog(QDialog):
             time.sleep(0.02)
             self.pbar.setValue(count)
             count = count + 1
+            if count == 100 :
+                msg = QMessageBox()
+                msg.setText("TRAINING IS COMPLETE")
+                msg.setWindowTitle("COMPLETE")
+                msg.exec()
+
+
+        
+        
     
     #Function that gets the user inputted value which corresponds to the % value of the training set they would like to train
     def getTrainingPercentage(self):

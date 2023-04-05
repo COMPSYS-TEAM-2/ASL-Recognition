@@ -92,9 +92,6 @@ class Window(QMainWindow):
         dlg = TrainDialog(self)
         dlg.exec()
 
-    
-        
-
     def errorMessageDlg(self):
         dlg = ErrorDialog(self)
         # dlg.exec()
