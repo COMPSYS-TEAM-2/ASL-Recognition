@@ -26,4 +26,3 @@ class TrainDialog(QDialog):
         self.cancel_btn.resize(95, 20)
         self.cancel_btn.move(200, 375)
         self.cancel_btn.clicked.connect(self.close)
-        self.show()

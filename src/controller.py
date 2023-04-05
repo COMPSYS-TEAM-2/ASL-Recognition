@@ -10,16 +10,18 @@ class Controller:
         self._network = Network()
         self._window = Window()
         self._initButtons()
+        self._initMenuBar()
 
     def _initButtons(self):
         self._window.takePhotoBtn.clicked.connect(self._takePhoto)
         if (self._window.camera.availableCameras):
             self._window.camera.captureSession.imageCapture(
         ).imageCaptured.connect(self._handleCapture)
+
+    def _initMenuBar(self):
         self._window.trainModelAct.triggered.connect(self._trainModel)
         self._window.fileMenu.addAction(self._window.trainModelAct)
         self._window.fileMenu.addAction(self._window.exitAct)
-        
 
     def _trainModel(self):
         self._window.trainDialog()
