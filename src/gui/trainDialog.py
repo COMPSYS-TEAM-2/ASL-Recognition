@@ -19,14 +19,6 @@ class TrainDialog(QDialog):
         self.pbar.resize(290, 30)
         self.pbar.move(5, 335)
 
-        # Combo button
-        self.comboBtn = QComboBox(self)
-        self.comboBtn.move(5, 375)
-        self.comboBtn.resize(90, 20)
-        itemsList = ["Model", "MNIST", "OTHER", "HAND AI"]
-        self.comboBtn.addItems(itemsList)
-        self.comboBtn.show()
-
         # Train Button
         self.train_btn = QPushButton('Train', self)
         self.train_btn.resize(95, 20)

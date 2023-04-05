@@ -10,7 +10,7 @@
 # User can see simple statistics of the dataset
 
 # Therefore the initial window should have buttons to import data or view the dataset
-from PyQt6.QtWidgets import QMainWindow, QApplication, QPushButton, QLabel, QTextBrowser, QGridLayout, QWidget
+from PyQt6.QtWidgets import QMainWindow, QApplication, QPushButton, QLabel, QTextBrowser, QGridLayout, QWidget, QComboBox
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QAction
 from gui.camera import Camera
@@ -31,6 +31,7 @@ class Window(QMainWindow):
         self.initMenubar()
         self.initCamera()
         self.initButton()
+        self.initComboButton()
         self.initProbabilities()
 
         self.show()
@@ -77,11 +78,19 @@ class Window(QMainWindow):
         self.mainLayout.addWidget(
             self.takePhotoBtn, 0, 10, 1, 2, Qt.AlignmentFlag.AlignTop)
 
+    def initComboButton(self):
+        # Combo button
+        self.comboBtn = QComboBox(self)
+        itemsList = ["Model", "MNIST", "OTHER", "HAND AI"]
+        self.comboBtn.addItems(itemsList)
+        self.mainLayout.addWidget(
+            self.comboBtn, 0, 10, 1, 2, Qt.AlignmentFlag.AlignBottom)
+
     def initProbabilities(self):
         label = QLabel('Letter Probabilties')
         self.mainLayout.addWidget(
-            label, 0, 10, 1, 2, Qt.AlignmentFlag.AlignBottom)
-        self.mainLayout.addWidget(QTextBrowser(), 1, 10, 9, 2)
+            label, 1, 10, 1, 2, Qt.AlignmentFlag.AlignBottom)
+        self.mainLayout.addWidget(QTextBrowser(), 2, 10, 8, 2)
 
     def initCamera(self):
         self.camera = Camera()
