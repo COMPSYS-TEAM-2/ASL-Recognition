@@ -16,7 +16,7 @@ from PyQt6.QtGui import QAction
 from gui.camera import Camera
 from gui.trainDialog import TrainDialog
 from gui.errorDialog import ErrorDialog
-
+from gui.trainingPrgBar import TrainingPrgBar
 
 
 class Window(QMainWindow):
@@ -94,6 +94,8 @@ class Window(QMainWindow):
         dlg.exec()
 
     
+        
+
     def errorMessageDlg(self):
         dlg = ErrorDialog(self)
         # dlg.exec()

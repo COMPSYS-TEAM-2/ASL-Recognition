@@ -1,6 +1,11 @@
 # Therefore the initial window should have buttons to import data or view the dataset
+<<<<<<< HEAD
 from PyQt6.QtWidgets import QPushButton, QComboBox, QDialog, QProgressBar, QTextBrowser,QMessageBox,QVBoxLayout
 from PyQt5.QtWidgets import *
+=======
+from PyQt6.QtWidgets import QPushButton, QComboBox, QDialog, QProgressBar, QTextBrowser
+from gui.trainingPrgBar import *
+>>>>>>> parent of 570a0fe (Popup working)
 
 class ProgBarWindow(QWidget):
 
@@ -42,7 +47,11 @@ class TrainDialog(QDialog):
         self.train_btn.resize(95, 20)
         self.train_btn.move(100, 375)
         # self.train_btn.clicked.connect(self.train_dataset)  # Train the dataset
+<<<<<<< HEAD
         self.train_btn.clicked.connect(ProgBarWindow)
+=======
+        self.train_btn.clicked.connect(self.trainProgBar())
+>>>>>>> parent of 570a0fe (Popup working)
 
 
         # Cancel Button
@@ -50,6 +59,7 @@ class TrainDialog(QDialog):
         self.cancel_btn.resize(95, 20)
         self.cancel_btn.move(200, 375)
         self.cancel_btn.clicked.connect(self.close)
+<<<<<<< HEAD
     
     
         
@@ -58,5 +68,10 @@ class TrainDialog(QDialog):
         
 
        
+=======
+
+    def trainProgBar(self):
+        prgb = TrainingPrgBar(self) 
+>>>>>>> parent of 570a0fe (Popup working)
 
 
