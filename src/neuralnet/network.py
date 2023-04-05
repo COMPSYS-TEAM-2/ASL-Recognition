@@ -26,6 +26,10 @@ class Network():
                 MNIST(self.train_df_mnist), batch_size=self.TRAIN_BATCH_SIZE, shuffle=True)
             self.testloader = DataLoader(
                 MNIST(self.test_df_mnist), batch_size=1, shuffle=True)
+        else:
+            print("No valid model selected")
+            # Need to add another error dialog
+            return 0
         # Select which model is going to be used for training
         # Trains the current model with the training data
         criterion = nn.CrossEntropyLoss()
