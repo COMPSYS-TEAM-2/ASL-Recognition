@@ -3,10 +3,6 @@ from PyQt6.QtWidgets import *
 from PyQt6.QtWidgets import QMessageBox 
 import time
 
-
-
-
-
 class TrainDialog(QDialog):
     # Dialog to train the database
     def __init__(self, parent=None):
@@ -49,6 +45,7 @@ class TrainDialog(QDialog):
         self.cancel_btn.move(200, 375)
         self.cancel_btn.clicked.connect(self.close)
 
+    #Function for when trianing starts to make progress on the prog bar 
     def startTraining(self):
         count = 0
         while count != 101 :
@@ -57,18 +54,29 @@ class TrainDialog(QDialog):
             self.pbar.setValue(count)
             count = count + 1
     
+    #Function that gets the user inputted value which corresponds to the % value of the training set they would like to train
     def getTrainingPercentage(self):
         self.percentage, ok = QInputDialog.getInt(self,"Input Percentage","What Percentage of the training set would you like to train ?")
         
+        # if percentage is greater than 100 
         if  self.percentage > 101 :
            
             msg = QMessageBox()
-            msg.StandardButton.Close
             msg.setText("You cannot training more than 100 percent of the training set.")
             msg.setInformativeText("PERCENTAGE LIMIT EXCEEDED")
             msg.setWindowTitle("ERROR!")
             msg.exec()
-            
+
+        # if percentage is less than 0 
+        elif  self.percentage < 0 :
+           
+            msg = QMessageBox()
+            msg.setText("You cannot training less than 1 percent of the training set.")
+            msg.setInformativeText("PERCENTAGE MINIMUM EXCEEDED")
+            msg.setWindowTitle("ERROR!")
+            msg.exec()
+
+        #if valid percentage train the model
         else:
             self.startTraining()
             
