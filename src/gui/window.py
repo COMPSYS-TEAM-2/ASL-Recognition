@@ -16,7 +16,6 @@ from PyQt6.QtGui import QAction
 from gui.camera import Camera
 from gui.trainDialog import TrainDialog
 from gui.errorDialog import ErrorDialog
-from gui.trainingPrgBar import TrainingPrgBar
 
 
 class Window(QMainWindow):

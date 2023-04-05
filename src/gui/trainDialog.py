@@ -1,18 +1,6 @@
 # Therefore the initial window should have buttons to import data or view the dataset
-<<<<<<< HEAD
-<<<<<<< HEAD
-from PyQt6.QtWidgets import QPushButton, QComboBox, QDialog, QProgressBar, QTextBrowser,QMessageBox,QVBoxLayout
-<<<<<<< HEAD
-from PyQt5.QtWidgets import *
-=======
-=======
->>>>>>> parent of 570a0fe (Popup working)
-from PyQt6.QtWidgets import QPushButton, QComboBox, QDialog, QProgressBar, QTextBrowser
-from gui.trainingPrgBar import *
->>>>>>> parent of 570a0fe (Popup working)
-=======
-from gui.trainingPrgBar import *
->>>>>>> parent of f179658 (Bugged even worse)
+from PyQt6.QtWidgets import *
+
 
 
 
@@ -46,29 +34,15 @@ class TrainDialog(QDialog):
         self.train_btn.resize(95, 20)
         self.train_btn.move(100, 375)
         # self.train_btn.clicked.connect(self.train_dataset)  # Train the dataset
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-        self.train_btn.clicked.connect(ProgBarWindow)
-=======
-        self.train_btn.clicked.connect(self.trainProgBar())
->>>>>>> parent of 570a0fe (Popup working)
-=======
-        self.train_btn.clicked.connect(self.trainProgBar())
->>>>>>> parent of 570a0fe (Popup working)
-=======
-        self.train_btn.clicked.connect(self.show_popUp)
->>>>>>> parent of f179658 (Bugged even worse)
-
-
+        self.train_btn.clicked.connect(self.show_pbar)
         # Cancel Button
         self.cancel_btn = QPushButton('Cancel', self)
         self.cancel_btn.resize(95, 20)
         self.cancel_btn.move(200, 375)
         self.cancel_btn.clicked.connect(self.close)
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
+    
+    def show_pbar(self,progressBar):
+        progressBar.show()
     
     
         
@@ -76,44 +50,6 @@ class TrainDialog(QDialog):
     
         
 
-       
-=======
 
-    def trainProgBar(self):
-        prgb = TrainingPrgBar(self) 
->>>>>>> parent of 570a0fe (Popup working)
-=======
-
-    def trainProgBar(self):
-        prgb = TrainingPrgBar(self) 
->>>>>>> parent of 570a0fe (Popup working)
-=======
-
-   
-    
-    def showPbar(self):
-
-        self.setWindowTitle('Progress Bar')
-        self.progress = QProgressBar(self)
-        self.progress.setGeometry(0, 0, 300, 25)
-        self.progress.setMaximum(100)
-        self.button = QPushButton('Start', self)
-        self.button.move(0, 30)
-
-        self.show()
-
-        self.button.clicked.connect(self.onButtonClick)
-
-    def onButtonClick(self):
-        count = 0
-        while count < 200:
-            count += 1
-            time.sleep(1)
-            self.progress.setValue(count)
-
-    def show_popUp(self):
-        self.showPbar()
-
->>>>>>> parent of f179658 (Bugged even worse)
 
 
