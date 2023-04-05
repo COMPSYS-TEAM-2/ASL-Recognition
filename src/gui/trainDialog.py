@@ -1,6 +1,8 @@
 # Therefore the initial window should have buttons to import data or view the dataset
 from PyQt6.QtWidgets import *
+from PyQt6.QtWidgets import QMessageBox 
 import time
+
 
 
 
@@ -38,7 +40,9 @@ class TrainDialog(QDialog):
         self.train_btn.resize(95, 20)
         self.train_btn.move(100, 375)
         #self.train_btn.clicked.connect(self.train_dataset)  # Train the dataset
-        self.train_btn.clicked.connect(self.startTraining)
+        #self.train_btn.clicked.connect(self.startTraining)
+        self.train_btn.clicked.connect(self.getTrainingPercentage)
+
         # Cancel Button
         self.cancel_btn = QPushButton('Cancel', self)
         self.cancel_btn.resize(95, 20)
@@ -49,9 +53,30 @@ class TrainDialog(QDialog):
         count = 0
         while count != 101 :
             x = count / (100) * 100
-            time.sleep(0.2)
+            time.sleep(0.02)
             self.pbar.setValue(count)
             count = count + 1
+    
+    def getTrainingPercentage(self):
+        self.percentage, ok = QInputDialog.getInt(self,"Input Percentage","What Percentage of the training set would you like to train ?")
+        
+        if  self.percentage > 101 :
+           
+            msg = QMessageBox()
+            msg.StandardButton.Close
+            msg.setText("You cannot training more than 100 percent of the training set.")
+            msg.setInformativeText("PERCENTAGE LIMIT EXCEEDED")
+            msg.setWindowTitle("ERROR!")
+            msg.exec()
+            
+        else:
+            self.startTraining()
+            
+
+        
+
+
+
 
             
     
