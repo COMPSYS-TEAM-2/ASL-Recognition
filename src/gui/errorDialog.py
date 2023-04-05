@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import QWidget, QPushButton, QDialog, QLabel, QGridLayout
+from PyQt6.QtWidgets import QPushButton, QDialog, QLabel, QGridLayout
 from PyQt6.QtCore import Qt
 
 

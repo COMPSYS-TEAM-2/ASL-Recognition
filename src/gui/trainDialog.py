@@ -19,10 +19,6 @@ class TrainDialog(QDialog):
         self.pbar.resize(290, 30)
         self.pbar.move(5, 335)
 
-        # Train Button
-        self.train_btn = QPushButton('Train', self)
-        self.train_btn.resize(95, 20)
-        self.train_btn.move(100, 375)
         # self.train_btn.clicked.connect(self.train_dataset)  # Train the dataset
 
         # Cancel Button
@@ -30,3 +26,4 @@ class TrainDialog(QDialog):
         self.cancel_btn.resize(95, 20)
         self.cancel_btn.move(200, 375)
         self.cancel_btn.clicked.connect(self.close)
+        self.show()

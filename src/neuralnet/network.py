@@ -16,15 +16,17 @@ class Network():
 
     def __init__(self):
         # Initialises a new Network instance which loads asl data
-        train_df = pd.read_csv("./data/sign_mnist_train.csv")
-        test_df = pd.read_csv("./data/sign_mnist_test.csv")
-        self.trainloader = DataLoader(
-            MNIST(train_df), batch_size=self.TRAIN_BATCH_SIZE, shuffle=True)
-        self.testloader = DataLoader(
-            MNIST(test_df), batch_size=1, shuffle=True)
+        self.train_df_mnist = pd.read_csv("./data/sign_mnist_train.csv")
+        self.test_df_mnist = pd.read_csv("./data/sign_mnist_test.csv")
         self.model = Model()
 
-    def train(self):
+    def train(self, model):
+        if model == "MNIST":
+            self.trainloader = DataLoader(
+                MNIST(self.train_df_mnist), batch_size=self.TRAIN_BATCH_SIZE, shuffle=True)
+            self.testloader = DataLoader(
+                MNIST(self.test_df_mnist), batch_size=1, shuffle=True)
+        # Select which model is going to be used for training
         # Trains the current model with the training data
         criterion = nn.CrossEntropyLoss()
         optimizer = optim.SGD(self.model.parameters(), lr=0.001, momentum=0.9)
@@ -52,7 +54,7 @@ class Network():
         print('Finished Training')
         plt.plot(running_loss_list)
         self.test_all(True)
-        self.save_model()
+        self.save_model(model)
 
     def test_all(self, train=False):
         # Tests the current model with the test data by default. If train is set to true then will test the model with the training data
@@ -76,7 +78,7 @@ class Network():
     def test(self, image):
         return self.model(image)
 
-    def save_model(self, name="model"):
+    def save_model(self, name):
         # Saves the model under the given name
         # Default name is "model"
         try:
@@ -89,7 +91,7 @@ class Network():
             pass
         torch.save(self.model.state_dict(), f"output/models/{name}.pth")
 
-    def load_model(self, name="model"):
+    def load_model(self, name):
         # Loads the model under the given name.
         # If there are errors it will train the model
         # Default name is "model"

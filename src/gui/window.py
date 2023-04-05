@@ -14,10 +14,10 @@ from PyQt6.QtWidgets import QMainWindow, QApplication, QPushButton, QLabel, QTex
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QAction
 from gui.camera import Camera
-from gui.trainDialog import TrainDialog
 from gui.errorDialog import ErrorDialog
 from gui.trainImagesDialog import TrainImagesDialog
 from gui.testImagesDialog import TestImagesDialog
+from gui.trainDialog import TrainDialog
 
 
 class Window(QMainWindow):
@@ -44,13 +44,12 @@ class Window(QMainWindow):
 
     def initMenubar(self):
         # Quit Action (File)
-        exitAct = QAction('&Quit', self)
-        exitAct.setShortcut('Ctrl+Q')
-        exitAct.triggered.connect(QApplication.quit)
+        self.exitAct = QAction('&Quit', self)
+        self.exitAct.setShortcut('Ctrl+Q')
+        self.exitAct.triggered.connect(QApplication.quit)
 
         # Train Model Action (File)
-        trainModelAct = QAction('&Train Model', self)
-        trainModelAct.triggered.connect(self.trainModel)
+        self.trainModelAct = QAction('&Train Model', self)
 
         # # View Trained Images (View)
         trainImagesAct = QAction('&View Training Images', self)
@@ -64,9 +63,7 @@ class Window(QMainWindow):
         menubar = self.menuBar()
 
         # File section
-        fileMenu = menubar.addMenu('&File')
-        fileMenu.addAction(trainModelAct)
-        fileMenu.addAction(exitAct)
+        self.fileMenu = menubar.addMenu('&File')
 
         # View section
         viewMenu = menubar.addMenu('&View')
@@ -86,6 +83,10 @@ class Window(QMainWindow):
         self.mainLayout.addWidget(
             self.comboBtn, 0, 10, 1, 2, Qt.AlignmentFlag.AlignBottom)
 
+    def getComboButtonValue(self):
+        # Fetch the value from the combo button
+        return str(self.comboBtn.currentText())
+
     def initProbabilities(self):
         label = QLabel('Letter Probabilties')
         self.mainLayout.addWidget(
@@ -97,16 +98,14 @@ class Window(QMainWindow):
         self.mainLayout.addWidget(self.camera, 0, 0, 10, 10)
 
     def showTrainImages(self):
-        dlg = TrainImagesDialog(self)
+        TrainImagesDialog(self)
 
     def showTestImages(self):
-        dlg = TestImagesDialog(self)
-
-    # Show the dialog
-    def trainModel(self):
-        dlg = TrainDialog(self)
-        dlg.exec()
+        TestImagesDialog(self)
 
     def errorMessageDlg(self):
-        dlg = ErrorDialog(self)
-        # dlg.exec()
+        ErrorDialog(self)
+
+    def trainDialog(self):
+        dlg = TrainDialog(self)
+        dlg.show()
