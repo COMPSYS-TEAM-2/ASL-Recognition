@@ -18,6 +18,10 @@ class Network():
         # Initialises a new Network instance which loads asl data
         self.train_df_mnist = pd.read_csv("./data/sign_mnist_train.csv")
         self.test_df_mnist = pd.read_csv("./data/sign_mnist_test.csv")
+        self.train_df_x = pd.read_csv("./data/sign_mnist_train.csv")
+        self.test_df_x = pd.read_csv("./data/sign_mnist_test.csv")
+        self.train_df_y = pd.read_csv("./data/sign_mnist_train.csv")
+        self.test_df_y = pd.read_csv("./data/sign_mnist_test.csv")
         self.model = Model()
 
     def train(self, model):
@@ -26,6 +30,16 @@ class Network():
                 MNIST(self.train_df_mnist), batch_size=self.TRAIN_BATCH_SIZE, shuffle=True)
             self.testloader = DataLoader(
                 MNIST(self.test_df_mnist), batch_size=1, shuffle=True)
+        elif model == "x":
+            self.trainloader = DataLoader(
+                MNIST(self.train_df_x), batch_size=self.TRAIN_BATCH_SIZE, shuffle=True)
+            self.testloader = DataLoader(
+                MNIST(self.test_df_x), batch_size=1, shuffle=True)
+        elif model == "y":
+            self.trainloader = DataLoader(
+                MNIST(self.train_df_y), batch_size=self.TRAIN_BATCH_SIZE, shuffle=True)
+            self.testloader = DataLoader(
+                MNIST(self.test_df_y), batch_size=1, shuffle=True)
         else:
             print("No valid model selected")
             # Need to add another error dialog
@@ -50,6 +64,7 @@ class Network():
                 # print statistics
                 running_loss += loss.item()
                 if i % 800 == 799:
+                    # Call to the progressbar to update it's progress
                     print('[%d, %5d] loss: %.3f' %
                           (epoch + 1, i + 1, running_loss / 800)
                           )
