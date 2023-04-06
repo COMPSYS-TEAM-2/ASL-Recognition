@@ -10,13 +10,23 @@ class Controller:
         self._network = Network()
         self._window = Window()
         self._initButtons()
+        self._initMenuBar()
 
     def _initButtons(self):
         self._window.takePhotoBtn.clicked.connect(self._takePhoto)
         if (self._window.camera.availableCameras):
             self._window.camera.captureSession.imageCapture(
         ).imageCaptured.connect(self._handleCapture)
-        
+
+    def _initMenuBar(self):
+        self._window.trainModelAct.triggered.connect(self._trainModel)
+        self._window.fileMenu.addAction(self._window.trainModelAct)
+        self._window.fileMenu.addAction(self._window.exitAct)
+
+    def _trainModel(self):
+        self._window.trainDialog()
+        self._network.train(str(self._window.getComboButtonValue()))
+
 
     def _takePhoto(self):
         try:
@@ -78,7 +88,8 @@ class Controller:
         # self._network.load_model()
         # 
         try:
-            self._network.load_model()
+            # Load model takes name as an input, set this to be the value from the combobox
+            self._network.load_model(self._window.getComboButtonValue())
             result = self._network.test(image)
             _, prediction = max(result, 1)
             return chr(prediction + ord('A'))

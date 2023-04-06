@@ -23,20 +23,6 @@ class TrainDialog(QDialog):
         self.pbar.setValue(0)
         self.pbar.show()
 
-        # Combo button
-        self.comboBtn = QComboBox(self)
-        self.comboBtn.move(5, 375)
-        self.comboBtn.resize(90, 20)
-        itemsList = ["Model", "MNIST", "OTHER", "HAND AI"]
-        self.comboBtn.addItems(itemsList)
-        self.comboBtn.show()
-
-        # Train Button
-        self.train_btn = QPushButton('Train', self)
-        self.train_btn.resize(95, 20)
-        self.train_btn.move(100, 375)
-        #self.train_btn.clicked.connect(self.train_dataset)  # Train the dataset
-        #self.train_btn.clicked.connect(self.startTraining)
         self.train_btn.clicked.connect(self.getTrainingPercentage)
 
         # Cancel Button
