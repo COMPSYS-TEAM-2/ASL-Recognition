@@ -57,6 +57,7 @@ class TrainDialog(QDialog):
                 msg = QMessageBox()
                 msg.setText("TRAINING IS COMPLETE")
                 msg.setWindowTitle("COMPLETE")
+                
                 msg.exec()
 
 
