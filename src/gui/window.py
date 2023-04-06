@@ -52,6 +52,7 @@ class Window(QMainWindow):
         # Train Model Action (File)
         self.trainModelAct = QAction('&Train Model', self)
 
+
         # # View Trained Images (View)
         trainImagesAct = QAction('&View Training Images', self)
         trainImagesAct.triggered.connect(self.showTrainImages)
@@ -80,7 +81,7 @@ class Window(QMainWindow):
     def initComboButton(self):
         # Combo button
         self.comboBtn = QComboBox(self)
-        itemsList = ["Model", "MNIST", "OTHER", "HAND AI"]
+        itemsList = ["MNIST", "OTHER", "HAND AI"]
         self.comboBtn.addItems(itemsList)
         self.mainLayout.addWidget(
             self.comboBtn, 0, 10, 1, 2, Qt.AlignmentFlag.AlignBottom)
