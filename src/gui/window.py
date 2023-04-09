@@ -10,7 +10,7 @@
 # User can see simple statistics of the dataset
 
 # Therefore the initial window should have buttons to import data or view the dataset
-from PyQt6.QtWidgets import QMainWindow, QApplication, QPushButton, QLabel, QTextBrowser, QGridLayout, QWidget, QComboBox, QSlider
+from PyQt6.QtWidgets import QMainWindow, QApplication, QPushButton, QLabel, QTextBrowser, QGridLayout, QWidget, QComboBox, QSlider,Qlabel
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QAction
 from gui.camera import Camera
@@ -103,7 +103,9 @@ class Window(QMainWindow):
         self.sl.setTickInterval(10)
         self.sl.setGeometry(5,5,5,5)
         self.mainLayout.addWidget(self.sl,10, 2, Qt.AlignmentFlag.AlignBottom)
-        self.setWindowTitle("SpinBox demo")
+        self.currentValue = QLabel('',self)
+        self.mainLayout.addWidget(self.currentValue)
+        
 
     def initProbabilities(self):
         label = QLabel('Letter Probabilties')
