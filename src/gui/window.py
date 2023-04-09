@@ -98,7 +98,7 @@ class Window(QMainWindow):
         self.sliderLabel = QLabel("Percentage of Training set to use ?")
         self.mainLayout.addWidget(self.sliderLabel,1,10,1,2)
         self.slider = QSlider(Qt.Orientation.Horizontal)
-        #self.mainLayout.addWidget(self.slider, 0, 10, 1, 2)
+        self.mainLayout.addWidget(self.slider, 2, 12, 1, 2)
         
         
 
@@ -106,8 +106,8 @@ class Window(QMainWindow):
     def initProbabilities(self):
         label = QLabel('Letter Probabilties')
         self.mainLayout.addWidget(
-            label, 1, 10, 1, 2, Qt.AlignmentFlag.AlignBottom)
-        self.mainLayout.addWidget(QTextBrowser(), 2, 10, 8, 3)
+            label, 3, 10, 1, 2, Qt.AlignmentFlag.AlignBottom)
+        self.mainLayout.addWidget(QTextBrowser(), 4, 10, 6, 3)
 
     def initCamera(self):
         self.camera = Camera()
