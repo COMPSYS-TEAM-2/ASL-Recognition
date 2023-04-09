@@ -10,7 +10,7 @@
 # User can see simple statistics of the dataset
 
 # Therefore the initial window should have buttons to import data or view the dataset
-from PyQt6.QtWidgets import QMainWindow, QApplication, QPushButton, QLabel, QTextBrowser, QGridLayout, QWidget, QComboBox
+from PyQt6.QtWidgets import QMainWindow, QApplication, QPushButton, QLabel, QTextBrowser, QGridLayout, QWidget, QComboBox, QSlider
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QAction
 from gui.camera import Camera
@@ -18,6 +18,8 @@ from gui.errorDialog import ErrorDialog
 from gui.trainImagesDialog import TrainImagesDialog
 from gui.testImagesDialog import TestImagesDialog
 from gui.trainDialog import TrainDialog
+
+
 
 
 class Window(QMainWindow):
@@ -31,9 +33,10 @@ class Window(QMainWindow):
         self.initMenubar()
         self.initCamera()
         self.initButton()
+        self.initTrainingSlider()
         self.initComboButton()
         self.initProbabilities()
-      
+        
 
         self.show()
 
@@ -89,6 +92,18 @@ class Window(QMainWindow):
     def getComboButtonValue(self):
         # Fetch the value from the combo button
         return str(self.comboBtn.currentText())
+    
+    def initTrainingSlider(self):
+        self.sl = QSlider(Qt.Orientation.Horizontal)
+        self.sl.setMinimum(0)
+        self.sl.setMaximum(100)
+        self.sl.setValue(50)
+        self.sl.setTickInterval(10)
+        self.sl.setTickPosition(QSlider.TickPosition.TicksBothSides)
+        self.sl.setTickInterval(10)
+        self.sl.setGeometry(5,5,5,5)
+        self.mainLayout.addWidget(self.sl,10, 2, Qt.AlignmentFlag.AlignBottom)
+        self.setWindowTitle("SpinBox demo")
 
     def initProbabilities(self):
         label = QLabel('Letter Probabilties')
@@ -112,3 +127,4 @@ class Window(QMainWindow):
     def trainDialog(self):
         dlg = TrainDialog(self)
         dlg.show()
+    
