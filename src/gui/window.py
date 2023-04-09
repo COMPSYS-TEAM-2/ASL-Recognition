@@ -10,7 +10,7 @@
 # User can see simple statistics of the dataset
 
 # Therefore the initial window should have buttons to import data or view the dataset
-from PyQt6.QtWidgets import QMainWindow, QApplication, QPushButton, QLabel, QTextBrowser, QGridLayout, QWidget, QComboBox, QSlider,Qlabel
+from PyQt6.QtWidgets import QMainWindow, QApplication, QPushButton, QLabel, QTextBrowser, QGridLayout, QWidget, QComboBox, QSlider
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QAction
 from gui.camera import Camera
@@ -18,6 +18,7 @@ from gui.errorDialog import ErrorDialog
 from gui.trainImagesDialog import TrainImagesDialog
 from gui.testImagesDialog import TestImagesDialog
 from gui.trainDialog import TrainDialog
+
 
 
 
@@ -94,24 +95,19 @@ class Window(QMainWindow):
         return str(self.comboBtn.currentText())
     
     def initTrainingSlider(self):
-        self.sl = QSlider(Qt.Orientation.Horizontal)
-        self.sl.setMinimum(0)
-        self.sl.setMaximum(100)
-        self.sl.setValue(50)
-        self.sl.setTickInterval(10)
-        self.sl.setTickPosition(QSlider.TickPosition.TicksBothSides)
-        self.sl.setTickInterval(10)
-        self.sl.setGeometry(5,5,5,5)
-        self.mainLayout.addWidget(self.sl,10, 2, Qt.AlignmentFlag.AlignBottom)
-        self.currentValue = QLabel('',self)
-        self.mainLayout.addWidget(self.currentValue)
+        self.sliderLabel = QLabel("Percentage of Training set to use ?")
+        self.mainLayout.addWidget(self.sliderLabel,1,10,1,2)
+        self.slider = QSlider(Qt.Orientation.Horizontal)
+        #self.mainLayout.addWidget(self.slider, 0, 10, 1, 2)
         
+        
+
 
     def initProbabilities(self):
         label = QLabel('Letter Probabilties')
         self.mainLayout.addWidget(
             label, 1, 10, 1, 2, Qt.AlignmentFlag.AlignBottom)
-        self.mainLayout.addWidget(QTextBrowser(), 2, 10, 8, 2)
+        self.mainLayout.addWidget(QTextBrowser(), 2, 10, 8, 3)
 
     def initCamera(self):
         self.camera = Camera()
