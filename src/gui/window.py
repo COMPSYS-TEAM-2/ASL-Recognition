@@ -104,10 +104,27 @@ class Window(QMainWindow):
         return str(self.comboBtn.currentText())
     
     def initTrainingSlider(self):
+
         self.sliderLabel = QLabel("Percentage of Training set to use ?")
         self.mainLayout.addWidget(self.sliderLabel,1,10,1,2,Qt.AlignmentFlag.AlignBottom)
         self.slider = QSlider(Qt.Orientation.Horizontal)
+        self.slider.setMinimum(0)
+        self.slider.setMaximum(100)
+        self.slider.setValue(20)
+        self.slider.setTickPosition(QSlider.TickPosition.TicksBelow)
+        self.slider.setTickInterval(10)
         self.mainLayout.addWidget(self.slider, 2, 10, 1, 2,Qt.AlignmentFlag.AlignBottom)
+        self.slider.valueChanged.connect(self.getSliderValue)
+        self.slider.valueChanged.connect(self.getSliderValue)
+        self.pcent = QLabel(str(self.getSliderValue()))
+        self.mainLayout.addWidget(self.pcent,2, 12, 1, 1,Qt.AlignmentFlag.AlignBottom)
+        
+
+    def getSliderValue(self):
+        self.percentage = self.slider.value()
+        return self.percentage
+        
+
         
         
 
