@@ -31,6 +31,7 @@ class Window(QMainWindow):
         self.setGeometry(0, 0, 1280, 720)
 
         self.initMainLayout()
+        self.initTitle()
         self.initMenubar()
         self.initCamera()
         self.initButton()
@@ -46,6 +47,14 @@ class Window(QMainWindow):
         centralWidget = QWidget(self)
         centralWidget.setLayout(self.mainLayout)
         self.setCentralWidget(centralWidget)
+
+    def initTitle(self):
+        self.font = self.font()
+        self.title = QLabel("HAND AI")
+        self.font.setPointSize(64)
+        self.font.setBold(1)
+        self.title.setFont(self.font)
+        self.mainLayout.addWidget(self.title,0,10,1,2,Qt.AlignmentFlag.AlignBottom.AlignCenter)
 
     def initMenubar(self):
         # Quit Action (File)
@@ -79,7 +88,7 @@ class Window(QMainWindow):
     def initButton(self):
         self.takePhotoBtn = QPushButton('Take photo')
         self.mainLayout.addWidget(
-            self.takePhotoBtn, 0, 10, 1, 2, Qt.AlignmentFlag.AlignTop)
+            self.takePhotoBtn, 1, 10, 1, 2, Qt.AlignmentFlag.AlignTop)
         
 
     def initComboButton(self):
@@ -88,7 +97,7 @@ class Window(QMainWindow):
         itemsList = ["MNIST", "OTHER", "HAND AI"]
         self.comboBtn.addItems(itemsList)
         self.mainLayout.addWidget(
-            self.comboBtn, 0, 10, 1, 2, Qt.AlignmentFlag.AlignBottom)
+            self.comboBtn, 1, 10, 1, 2, Qt.AlignmentFlag.AlignBottom)
 
     def getComboButtonValue(self):
         # Fetch the value from the combo button
@@ -96,9 +105,9 @@ class Window(QMainWindow):
     
     def initTrainingSlider(self):
         self.sliderLabel = QLabel("Percentage of Training set to use ?")
-        self.mainLayout.addWidget(self.sliderLabel,1,10,1,2)
+        self.mainLayout.addWidget(self.sliderLabel,1,10,1,2,Qt.AlignmentFlag.AlignBottom)
         self.slider = QSlider(Qt.Orientation.Horizontal)
-        self.mainLayout.addWidget(self.slider, 2, 12, 1, 2)
+        self.mainLayout.addWidget(self.slider, 2, 10, 1, 2,Qt.AlignmentFlag.AlignBottom)
         
         
 
