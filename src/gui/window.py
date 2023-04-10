@@ -115,7 +115,6 @@ class Window(QMainWindow):
         self.slider.setTickInterval(10)
         self.mainLayout.addWidget(self.slider, 2, 10, 1, 2,Qt.AlignmentFlag.AlignBottom)
         self.slider.valueChanged.connect(self.getSliderValue)
-        self.slider.valueChanged.connect(self.getSliderValue)
         self.pcent = QLabel(str(self.getSliderValue()))
         self.mainLayout.addWidget(self.pcent,2, 12, 1, 1,Qt.AlignmentFlag.AlignBottom)
         
@@ -123,6 +122,8 @@ class Window(QMainWindow):
     def getSliderValue(self):
         self.percentage = self.slider.value()
         return self.percentage
+    
+    #might need to set getter and setter if it does work this way 11/04 6:23am
         
 
         
