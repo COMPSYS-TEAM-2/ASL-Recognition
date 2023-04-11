@@ -1,6 +1,5 @@
 import os
 import pandas as pd
-import matplotlib.pyplot as plt
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -8,6 +7,7 @@ from torch.utils.data import DataLoader
 from neuralnet.mnist import MNIST
 
 from neuralnet.models.model import Model
+from PyQt6.QtWidgets import QTextBrowser, QProgressBar
 
 
 class Network():
@@ -18,38 +18,16 @@ class Network():
         # Initialises a new Network instance which loads asl data
         self.train_df_mnist = pd.read_csv("./data/sign_mnist_train.csv")
         self.test_df_mnist = pd.read_csv("./data/sign_mnist_test.csv")
-        self.train_df_x = pd.read_csv("./data/sign_mnist_train.csv")
-        self.test_df_x = pd.read_csv("./data/sign_mnist_test.csv")
-        self.train_df_y = pd.read_csv("./data/sign_mnist_train.csv")
-        self.test_df_y = pd.read_csv("./data/sign_mnist_test.csv")
         self.model = Model()
 
-    def train(self, model):
-        if model == "MNIST":
-            self.trainloader = DataLoader(
-                MNIST(self.train_df_mnist), batch_size=self.TRAIN_BATCH_SIZE, shuffle=True)
-            self.testloader = DataLoader(
-                MNIST(self.test_df_mnist), batch_size=1, shuffle=True)
-        elif model == "x":
-            self.trainloader = DataLoader(
-                MNIST(self.train_df_x), batch_size=self.TRAIN_BATCH_SIZE, shuffle=True)
-            self.testloader = DataLoader(
-                MNIST(self.test_df_x), batch_size=1, shuffle=True)
-        elif model == "y":
-            self.trainloader = DataLoader(
-                MNIST(self.train_df_y), batch_size=self.TRAIN_BATCH_SIZE, shuffle=True)
-            self.testloader = DataLoader(
-                MNIST(self.test_df_y), batch_size=1, shuffle=True)
-        else:
-            print("No valid model selected")
-            # Need to add another error dialog
-            return 0
-        # Select which model is going to be used for training
-        # Trains the current model with the training data
+    def train(self, model, pbar: QProgressBar):
+
+        self.trainloader = DataLoader(
+            MNIST(self.train_df_mnist), batch_size=self.TRAIN_BATCH_SIZE, shuffle=True)
+        self.testloader = DataLoader(
+            MNIST(self.test_df_mnist), batch_size=1, shuffle=True)
         criterion = nn.CrossEntropyLoss()
         optimizer = optim.SGD(self.model.parameters(), lr=0.001, momentum=0.9)
-
-        running_loss_list = []
         for epoch in range(self.EPOCH):
             running_loss = 0.0
             for i, data in enumerate(self.trainloader):
@@ -63,17 +41,13 @@ class Network():
 
                 # print statistics
                 running_loss += loss.item()
-                if i % 800 == 799:
-                    # Call to the progressbar to update it's progress
-                    print('[%d, %5d] loss: %.3f' %
-                          (epoch + 1, i + 1, running_loss / 800)
-                          )
-                    running_loss_list.append(running_loss)
-                    running_loss = 0.0
-        print('Finished Training')
-        plt.plot(running_loss_list)
-        self.test_all(True)
+                if i % 300 == 0:
+                    length = len(self.trainloader)
+                    pbar.setValue((i + epoch * length) /
+                                  (length * self.EPOCH) * 100)
+        pbar.setValue(99)
         self.save_model(model)
+        pbar.setValue(100)
 
     def test_all(self, train=False):
         # Tests the current model with the test data by default. If train is set to true then will test the model with the training data
@@ -91,8 +65,7 @@ class Network():
                 total += labels.size(0)
                 correct += (predicted == labels).sum().item()
                 # TODO limit number of decimal points
-            print(
-                f"Accuracy of the network on {'train' if(train) else 'test'} images: ", correct/total * 100, "%")
+            return f"Accuracy of the network on {'train' if(train) else 'test'} images: {correct/total * 100} %"
 
     def test(self, image):
         return self.model(image)

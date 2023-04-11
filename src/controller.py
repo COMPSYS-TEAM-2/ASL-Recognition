@@ -2,11 +2,15 @@ from torch import FloatTensor, max
 from PyQt6.QtGui import QImage
 from PIL import Image, ImageFilter
 import numpy as np
-from PyQt6.QtWidgets import QMessageBox,QInputDialog
+from PyQt6.QtWidgets import QMessageBox, QInputDialog
 import time
+import threading
+from gui.trainThread import TrainThread
 
 from neuralnet.network import Network
 from gui.window import Window
+
+
 class Controller:
     def __init__(self):
         self._network = Network()
@@ -18,20 +22,23 @@ class Controller:
         self._window.takePhotoBtn.clicked.connect(self._takePhoto)
         if (self._window.camera.availableCameras):
             self._window.camera.captureSession.imageCapture(
-        ).imageCaptured.connect(self._handleCapture)
+            ).imageCaptured.connect(self._handleCapture)
 
     def _initMenuBar(self):
 
-        #self._window.trainModelAct.triggered.connect(self.getTrainingPercentage)
+        self._window.trainModelAct.triggered.connect(
+            self._trainModel)
 
-        self._window.trainModelAct.triggered.connect(self._trainModel)
         self._window.fileMenu.addAction(self._window.trainModelAct)
         self._window.fileMenu.addAction(self._window.exitAct)
 
     def _trainModel(self):
-        self._window.trainDialog()
-        self._network.train(str(self._window.getComboButtonValue()))
-
+        self.traindlg = self._window.trainDialog()
+        self.thread = TrainThread(self._network, str(
+            self._window.getComboButtonValue()), self.traindlg.pbar)
+        self.traindlg.setThread(self.thread)
+        self.traindlg.pbar.setValue(0)
+        self.thread.start()
 
     def _takePhoto(self):
         try:
@@ -49,9 +56,8 @@ class Controller:
         preparedImage = self.prepareImage(Image.fromarray(arr[..., 2::-1]))
         print(self.PredictImage(preparedImage))
 
-        
     def prepareImage(self, image):
-    # Converting image to MNIST dataset format
+        # Converting image to MNIST dataset format
 
         im = image.convert('L')
         width = float(im.size[0])
@@ -70,7 +76,8 @@ class Controller:
                 ImageFilter.SHARPEN)
             # calculate horizontal position
             wtop = int(round(((28 - nheight) / 2), 0))
-            new_image.paste(img, (0, wtop))  # paste resized image on white canvas
+            # paste resized image on white canvas
+            new_image.paste(img, (0, wtop))
         else:
             # Height is bigger. Heigth becomes 20 pixels.
             # resize width according to ratio height
@@ -82,16 +89,17 @@ class Controller:
                 ImageFilter.SHARPEN)
             # caculate vertical pozition
             wleft = int(round(((28 - nwidth) / 2), 0))
-            new_image.paste(img, (wleft, 0))  # paste resized image on white canvas
+            # paste resized image on white canvas
+            new_image.paste(img, (wleft, 0))
 
         pixels = list(new_image.getdata())  # get pixel values
         pixels_normalized = [x / 255.0 for x in pixels]
 
         return FloatTensor(pixels_normalized).view(1, 28, 28)
-            
+
     def PredictImage(self, image):
         # self._network.load_model()
-        # 
+        #
         try:
             # Load model takes name as an input, set this to be the value from the combobox
             self._network.load_model(self._window.getComboButtonValue())
@@ -104,46 +112,3 @@ class Controller:
             self._window.errorMessageDlg()
 
         return "Error"
-    
-
-
-
-    #def startTraining(self):
-        count = 0
-        while count != 101 :
-            x = count / (100) * 100
-            time.sleep(0.02)
-            self.pbar.setValue(count)
-            count = count + 1
-            if count == 100 :
-                msg = QMessageBox()
-                msg.setText("TRAINING IS COMPLETE")
-                msg.setWindowTitle("COMPLETE")
-                
-                msg.exec()
-
-    #Function that gets the user inputted value which corresponds to the % value of the training set they would like to train
-    #def getTrainingPercentage(self):
-        self.percentage, ok = QInputDialog.getInt(self._,"Input Percentage","What Percentage of the training set would you like to train ?")
-        
-        # if percentage is greater than 100 
-        if  self.percentage > 101 :
-           
-            msg = QMessageBox()
-            msg.setText("You cannot training more than 100 percent of the training set.")
-            msg.setInformativeText("PERCENTAGE LIMIT EXCEEDED")
-            msg.setWindowTitle("ERROR!")
-            msg.exec()
-
-        # if percentage is less than 0 
-        elif  self.percentage < 0 :
-           
-            msg = QMessageBox()
-            msg.setText("You cannot training less than 1 percent of the training set.")
-            msg.setInformativeText("PERCENTAGE MINIMUM EXCEEDED")
-            msg.setWindowTitle("ERROR!")
-            msg.exec()
-
-        #if valid percentage train the model
-        else:
-            self.startTraining()

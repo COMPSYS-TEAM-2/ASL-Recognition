@@ -52,7 +52,6 @@ class Window(QMainWindow):
         # Train Model Action (File)
         self.trainModelAct = QAction('&Train Model', self)
 
-
         # # View Trained Images (View)
         trainImagesAct = QAction('&View Training Images', self)
         trainImagesAct.triggered.connect(self.showTrainImages)
@@ -112,3 +111,4 @@ class Window(QMainWindow):
     def trainDialog(self):
         dlg = TrainDialog(self)
         dlg.show()
+        return dlg
