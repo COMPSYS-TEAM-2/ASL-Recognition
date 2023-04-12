@@ -52,7 +52,7 @@ class Window(QMainWindow):
         self.font = self.font()
         self.title = QLabel("HAND AI")
         self.font.setPointSize(64)
-        self.font.setBold(1)
+        self.font.setBold(0)
         self.title.setFont(self.font)
         self.mainLayout.addWidget(self.title,0,10,1,2,Qt.AlignmentFlag.AlignBottom.AlignCenter)
 
@@ -127,9 +127,6 @@ class Window(QMainWindow):
         
 
         
-        
-
-
     def initProbabilities(self):
         label = QLabel('Letter Probabilties')
         self.mainLayout.addWidget(
