@@ -85,6 +85,9 @@ class Window(QMainWindow):
     def initProbabilities(self):
         label = QLabel('Letter Probabilties')
         self.probabilities = QTextBrowser()
+        self.probabilities.setText(
+            "A:\nB:\nC:\nD:\nE:\nF:\nG:\nH:\nI:\nJ:\nK:\nL:\nM:\nN:\nO:\nP:\nQ:\nR:\nS:\nT:\nU:\nV:\nW:\nX:\nY:\nZ:")
+        self.probabilities.append("\n\n<H1>Result:</H1>")
         self.mainLayout.addWidget(
             label, 1, 10, 1, 2, Qt.AlignmentFlag.AlignBottom)
         self.mainLayout.addWidget(self.probabilities, 2, 10, 8, 2)
@@ -114,3 +117,25 @@ class Window(QMainWindow):
 
     def showTestImages(self):
         TestImagesDialog(self)
+
+    def updatePercentages(self, results, prediction):
+        lettersArray = ["A: ", "B: ", "C: ", "D: ", "E: ", "F: ", "G: ", "H: ", "I: ", "J: ", "K: ", "L: ",
+                        "M: ", "N: ", "O: ", "P: ", "Q: ", "R: ", "S: ", "T: ", "U: ", "V: ", "W: ", "X: ", "Y: ", "Z: "]
+        valuesArray = []
+        # Use a set of for loops to take the results, put them into a dict, print this dict to the text box
+        for i in results:
+            for j in i:
+                # Set j to be my string
+                # Remove unwanted characters from the string
+                myVal = str(j)
+                myVal = myVal.replace("tensor(", "")
+                myVal = myVal.replace(", grad_fn=<UnbindBackward0>)", "")
+                valuesArray.append(myVal)
+        # Insert all of the values into the text box
+        self.probabilities.clear()
+        for i, letter in enumerate(lettersArray):
+            appendString = str(letter + valuesArray[i] + "%")
+            self.probabilities.append(appendString)
+        appendResultString = str(
+            "\n\n<H1>Result: " + chr(prediction + ord('A')) + "</H1>")
+        self.probabilities.append(appendResultString)

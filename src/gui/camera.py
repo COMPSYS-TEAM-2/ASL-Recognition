@@ -65,6 +65,9 @@ class Camera(QWidget):
             self.win.network.load_model(self.win.getModel())
             result = self.win.network.test(image)
             _, prediction = max(result, 1)
+            # Result is an array of all the probablilities
+            # This can be passed to the window in order to fill the percentages box
+            self.win.updatePercentages(result, prediction)
             return chr(prediction + ord('A'))
         except:
             self.win.errorPopup("Unable to find model")
