@@ -21,7 +21,7 @@ class TrainWorker(QRunnable):
         try:
             self.network.train(
                 self.model, self.signals.progress, self.signals.message)
-        except StopIteration as error:
-            print(error)
+        except StopIteration:
+            pass
         finally:
             self.signals.finished.emit()

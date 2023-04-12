@@ -24,7 +24,7 @@ class Camera(QWidget):
     def initPalette(self):
         self.setAutoFillBackground(True)
         palette = self.palette()
-        palette.setColor(QPalette.ColorRole.Window, QColor("green"))
+        palette.setColor(QPalette.ColorRole.Window, QColor("black"))
         palette.setColor(QPalette.ColorRole.WindowText, QColor("white"))
         self.setPalette(palette)
 

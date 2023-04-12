@@ -106,7 +106,6 @@ class Window(QMainWindow):
         worker.signals.progress.connect(dlg.pbar.setValue)
         worker.signals.message.connect(
             dlg.textBrowserTrain.append)
-        worker.signals.finished.connect(dlg.close)
         dlg.setCancelFunc(self.network.cancel)
         self.threadpool.start(worker)
 
