@@ -4,13 +4,13 @@ from PyQt6.QtCore import Qt
 
 class ErrorDialog(QDialog):
     # Dialog to train the database
-    def __init__(self, parent=None):
-        super().__init__(parent=parent)
-        self.setWindowTitle("Error")
+    def __init__(self,message, parent=None):
+        super().__init__(parent)
+        self.setWindowTitle("Error!")
 
         self.mainLayout = QGridLayout()
 
-        self.errorLbl = QLabel("Error: Unable to find model")
+        self.errorLbl = QLabel(f"{message}")
         self.mainLayout.addWidget(
             self.errorLbl, 0, 0, 1, 0, Qt.AlignmentFlag.AlignCenter)
         self.okBtn = QPushButton("Ok")

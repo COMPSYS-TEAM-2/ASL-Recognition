@@ -21,13 +21,13 @@ class TrainDialog(QDialog):
         self.pbar.move(5, 335)
         self.pbar.setMaximum(100)
         self.pbar.setValue(0)
-        self.pbar.show()
 
         # Cancel Button
         self.cancel_btn = QPushButton('Cancel', self)
         self.cancel_btn.resize(95, 20)
         self.cancel_btn.move(200, 375)
         self.cancel_btn.clicked.connect(self.close)
+        self.show()
 
     def setCancelFunc(self, cancelFunc):
         self.cancelFunc = cancelFunc

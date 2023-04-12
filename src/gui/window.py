@@ -1,23 +1,13 @@
-# For the layout of our pyqt window
-# Need to be able to save and load
-# Need to be able to download data
-# User can import dataset
-# User can see time left to finish import
-# User can stop the progress
-# User can view images of the train or test dataset
-# User can scroll up or down to view all the images
-# User can filter to see specific images
-# User can see simple statistics of the dataset
-
-# Therefore the initial window should have buttons to import data or view the dataset
 from PyQt6.QtWidgets import QMainWindow, QApplication, QPushButton, QLabel, QTextBrowser, QGridLayout, QWidget, QComboBox
-from PyQt6.QtCore import Qt
+from PyQt6.QtCore import Qt, QThreadPool
 from PyQt6.QtGui import QAction
 from gui.camera import Camera
 from gui.errorDialog import ErrorDialog
 from gui.trainImagesDialog import TrainImagesDialog
 from gui.testImagesDialog import TestImagesDialog
 from gui.trainDialog import TrainDialog
+from gui.trainWorker import TrainWorker
+from neuralnet.network import Network
 
 
 class Window(QMainWindow):
@@ -27,11 +17,14 @@ class Window(QMainWindow):
         self.setWindowTitle("Sign Language Recognition")
         self.setGeometry(0, 0, 1280, 720)
 
+        self.threadpool = QThreadPool()
+        self.network = Network()
+
         self.initMainLayout()
         self.initMenubar()
         self.initCamera()
         self.initButton()
-        self.initComboButton()
+        self.initModelSelector()
         self.initProbabilities()
 
         self.show()
@@ -50,6 +43,7 @@ class Window(QMainWindow):
 
         # Train Model Action (File)
         self.trainModelAct = QAction('&Train Model', self)
+        self.trainModelAct.triggered.connect(self.train)
 
         # # View Trained Images (View)
         trainImagesAct = QAction('&View Training Images', self)
@@ -63,8 +57,9 @@ class Window(QMainWindow):
         menubar = self.menuBar()
 
         # File section
-        self.fileMenu = menubar.addMenu('&File')
-
+        fileMenu = menubar.addMenu('&File')
+        fileMenu.addAction(self.trainModelAct)
+        fileMenu.addAction(self.exitAct)
         # View section
         viewMenu = menubar.addMenu('&View')
         viewMenu.addAction(trainImagesAct)
@@ -74,39 +69,49 @@ class Window(QMainWindow):
         self.takePhotoBtn = QPushButton('Take photo')
         self.mainLayout.addWidget(
             self.takePhotoBtn, 0, 10, 1, 2, Qt.AlignmentFlag.AlignTop)
+        self.takePhotoBtn.clicked.connect(self.camera.takePhoto)
+        if (self.camera.availableCameras):
+            self.camera.captureSession.imageCapture(
+            ).imageCaptured.connect(self.camera.handleCapture)
 
-    def initComboButton(self):
+    def initModelSelector(self):
         # Combo button
-        self.comboBtn = QComboBox(self)
+        self.models = QComboBox(self)
         itemsList = ["LeNet", "AlexNet", "ResNet"]
-        self.comboBtn.addItems(itemsList)
+        self.models.addItems(itemsList)
         self.mainLayout.addWidget(
-            self.comboBtn, 0, 10, 1, 2, Qt.AlignmentFlag.AlignBottom)
-
-    def getModel(self):
-        # Fetch the value from the combo button
-        return str(self.comboBtn.currentText())
+            self.models, 0, 10, 1, 2, Qt.AlignmentFlag.AlignBottom)
 
     def initProbabilities(self):
         label = QLabel('Letter Probabilties')
+        self.probabilities = QTextBrowser()
         self.mainLayout.addWidget(
             label, 1, 10, 1, 2, Qt.AlignmentFlag.AlignBottom)
-        self.mainLayout.addWidget(QTextBrowser(), 2, 10, 8, 2)
+        self.mainLayout.addWidget(self.probabilities, 2, 10, 8, 2)
 
     def initCamera(self):
-        self.camera = Camera()
+        self.camera = Camera(self)
         self.mainLayout.addWidget(self.camera, 0, 0, 10, 10)
+
+    def getModel(self):
+        # Fetch the value from the combo button
+        return self.models.currentText()
+
+    def errorPopup(self, message):
+        ErrorDialog(message, self)
+
+    def train(self):
+        dlg = TrainDialog(self)
+        worker = TrainWorker(self.network, self.getModel())
+        worker.signals.progress.connect(dlg.pbar.setValue)
+        worker.signals.message.connect(
+            dlg.textBrowserTrain.append)
+        worker.signals.finished.connect(dlg.close)
+        dlg.setCancelFunc(self.network.cancel)
+        self.threadpool.start(worker)
 
     def showTrainImages(self):
         TrainImagesDialog(self)
 
     def showTestImages(self):
         TestImagesDialog(self)
-
-    def errorMessageDlg(self):
-        ErrorDialog(self)
-
-    def trainDialog(self):
-        dlg = TrainDialog(self)
-        dlg.show()
-        return dlg

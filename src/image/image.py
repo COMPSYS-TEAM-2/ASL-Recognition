@@ -1,12 +1,19 @@
 from PIL import Image, ImageFilter
 import numpy as np
 from torch import FloatTensor
+from PyQt6.QtGui import QImage
 
 
-def prepare_image(path: str):
+def prepareImage(image: QImage):
     # Converting image to MNIST dataset format
-
-    im = Image.open(path).convert('L')
+    image = image.convertToFormat(QImage.Format.Format_RGB32)
+    height = image.height()
+    width = image.width()
+    pointer = image.constBits()
+    pointer.setsize(height * width * 4)
+    arr = np.frombuffer(pointer, np.uint8).reshape((height, width, 4))
+    im = Image.fromarray(arr[..., 2::-1])
+    im = im.convert('L')
     width = float(im.size[0])
     height = float(im.size[1])
     # creates white canvas of 28x28 pixels
@@ -23,7 +30,8 @@ def prepare_image(path: str):
             ImageFilter.SHARPEN)
         # calculate horizontal position
         wtop = int(round(((28 - nheight) / 2), 0))
-        new_image.paste(img, (0, wtop))  # paste resized image on white canvas
+        # paste resized image on white canvas
+        new_image.paste(img, (0, wtop))
     else:
         # Height is bigger. Heigth becomes 20 pixels.
         # resize width according to ratio height
@@ -35,9 +43,10 @@ def prepare_image(path: str):
             ImageFilter.SHARPEN)
         # caculate vertical pozition
         wleft = int(round(((28 - nwidth) / 2), 0))
-        new_image.paste(img, (wleft, 0))  # paste resized image on white canvas
+        # paste resized image on white canvas
+        new_image.paste(img, (wleft, 0))
 
     pixels = list(new_image.getdata())  # get pixel values
     pixels_normalized = [x / 255.0 for x in pixels]
 
-    return FloatTensor(pixels_normalized).view(1, 28, 28)
+    return FloatTensor(pixels_normalized).view(1, 1, 28, 28)

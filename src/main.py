@@ -1,13 +1,13 @@
 import sys
 from PyQt6.QtWidgets import QApplication
-from controller import Controller
-from gui.palette import set_palette
+from gui.palette import setPalette
+from gui.window import Window
 
 
 def main():
     app = QApplication([])
-    set_palette(app)
-    _ = Controller()
+    setPalette(app)
+    _ = Window()
     sys.exit(app.exec())
 
 
