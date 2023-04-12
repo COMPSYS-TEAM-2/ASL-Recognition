@@ -61,7 +61,7 @@ class Network():
                     pbar.emit((i + epoch * length) /
                               (length * self.EPOCH) * 100)
         pbar.emit(99)
-        message.emit("\nTesting model...")
+        # message.emit("\nTesting model...")
         message.emit(self.test_all(True))
         self.save_model(model)
         message.emit("\nModel trained and saved")
