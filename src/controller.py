@@ -1,11 +1,9 @@
 from torch import FloatTensor, max
 from PyQt6.QtGui import QImage
+from PyQt6.QtCore import QThreadPool
 from PIL import Image, ImageFilter
 import numpy as np
-from PyQt6.QtWidgets import QMessageBox, QInputDialog
-import time
-import threading
-from gui.trainThread import TrainThread
+from gui.trainWorker import TrainWorker
 
 from neuralnet.network import Network
 from gui.window import Window
@@ -15,38 +13,40 @@ class Controller:
     def __init__(self):
         self._network = Network()
         self._window = Window()
-        self._initButtons()
-        self._initMenuBar()
+        self.threadpool = QThreadPool()
+        self.initButtons()
+        self.initMenuBar()
 
-    def _initButtons(self):
-        self._window.takePhotoBtn.clicked.connect(self._takePhoto)
+    def initButtons(self):
+        self._window.takePhotoBtn.clicked.connect(self.takePhoto)
         if (self._window.camera.availableCameras):
             self._window.camera.captureSession.imageCapture(
-            ).imageCaptured.connect(self._handleCapture)
+            ).imageCaptured.connect(self.handleCapture)
 
-    def _initMenuBar(self):
-
+    def initMenuBar(self):
         self._window.trainModelAct.triggered.connect(
-            self._trainModel)
+            self.trainModel)
 
         self._window.fileMenu.addAction(self._window.trainModelAct)
         self._window.fileMenu.addAction(self._window.exitAct)
 
-    def _trainModel(self):
+    def trainModel(self):
         self.traindlg = self._window.trainDialog()
-        self.thread = TrainThread(self._network, str(
-            self._window.getComboButtonValue()), self.traindlg.pbar)
-        self.traindlg.setThread(self.thread)
-        self.traindlg.pbar.setValue(0)
-        self.thread.start()
+        worker = TrainWorker(self._network, self._window.getModel())
+        worker.signals.progress.connect(self.traindlg.pbar.setValue)
+        worker.signals.message.connect(
+            self.traindlg.textBrowserTrain.append)
+        worker.signals.finished.connect(self.traindlg.close)
+        self.traindlg.setCancelFunc(self._network.cancel)
+        self.threadpool.start(worker)
 
-    def _takePhoto(self):
+    def takePhoto(self):
         try:
             self._window.camera.captureSession.imageCapture().capture()
         except AttributeError:
             print("No Camera")
 
-    def _handleCapture(self, id: int, capture: QImage):
+    def handleCapture(self, id: int, capture: QImage):
         image = capture.convertToFormat(QImage.Format.Format_RGB32)
         height = image.height()
         width = image.width()
@@ -56,7 +56,7 @@ class Controller:
         preparedImage = self.prepareImage(Image.fromarray(arr[..., 2::-1]))
         print(self.PredictImage(preparedImage))
 
-    def prepareImage(self, image):
+    def prepareImage(self, image: Image):
         # Converting image to MNIST dataset format
 
         im = image.convert('L')
@@ -102,7 +102,7 @@ class Controller:
         #
         try:
             # Load model takes name as an input, set this to be the value from the combobox
-            self._network.load_model(self._window.getComboButtonValue())
+            self._network.load_model(self._window.getModel())
             result = self._network.test(image)
             _, prediction = max(result, 1)
             return chr(prediction + ord('A'))

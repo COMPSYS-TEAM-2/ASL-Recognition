@@ -33,7 +33,6 @@ class Window(QMainWindow):
         self.initButton()
         self.initComboButton()
         self.initProbabilities()
-      
 
         self.show()
 
@@ -75,17 +74,16 @@ class Window(QMainWindow):
         self.takePhotoBtn = QPushButton('Take photo')
         self.mainLayout.addWidget(
             self.takePhotoBtn, 0, 10, 1, 2, Qt.AlignmentFlag.AlignTop)
-        
 
     def initComboButton(self):
         # Combo button
         self.comboBtn = QComboBox(self)
-        itemsList = ["MNIST", "OTHER", "HAND AI"]
+        itemsList = ["LeNet", "AlexNet", "ResNet"]
         self.comboBtn.addItems(itemsList)
         self.mainLayout.addWidget(
             self.comboBtn, 0, 10, 1, 2, Qt.AlignmentFlag.AlignBottom)
 
-    def getComboButtonValue(self):
+    def getModel(self):
         # Fetch the value from the combo button
         return str(self.comboBtn.currentText())
 
