@@ -39,8 +39,7 @@ class Window(QMainWindow):
         self.initMenubar()
         self.initCamera()
         self.initButton()
-        self.initComboButton()
-        self.initTrainingSlider() # Could make errors
+       # self.initTrainingSlider() # Could make errors
         self.initModelSelector() #Could make errors
         self.initProbabilities()
       
@@ -94,7 +93,7 @@ class Window(QMainWindow):
     def initButton(self):
         self.takePhotoBtn = QPushButton('Take photo')
         self.mainLayout.addWidget(
-            self.takePhotoBtn, 1, 10, 1, 2, Qt.AlignmentFlag.AlignTop)
+            self.takePhotoBtn, 2, 10, 1, 2, Qt.AlignmentFlag.AlignTop)
         self.takePhotoBtn.clicked.connect(self.camera.takePhoto)
         if (self.camera.availableCameras):
             self.camera.captureSession.imageCapture(
@@ -106,7 +105,7 @@ class Window(QMainWindow):
         itemsList = ["LeNet", "AlexNet", "ResNet"]
         self.models.addItems(itemsList)
         self.mainLayout.addWidget(
-            self.models, 0, 10, 1, 2, Qt.AlignmentFlag.AlignBottom)
+            self.models, 2, 10, 1, 2, Qt.AlignmentFlag.AlignBottom)
 
     def getComboButtonValue(self):
         # Fetch the value from the combo button
@@ -132,7 +131,6 @@ class Window(QMainWindow):
         self.percentage = self.slider.value()
         return self.percentage
     
-    #might need to set getter and setter if it does work this way 11/04 6:23am
         
 
         
@@ -142,10 +140,10 @@ class Window(QMainWindow):
         self.probabilities.setText(
             "A:\nB:\nC:\nD:\nE:\nF:\nG:\nH:\nI:\nJ:\nK:\nL:\nM:\nN:\nO:\nP:\nQ:\nR:\nS:\nT:\nU:\nV:\nW:\nX:\nY:\nZ:")
         self.probabilities.append("\n\n<H1>Result:</H1>")
-        self.mainLayout.addWidget(label, 1, 10, 1, 2, Qt.AlignmentFlag.AlignBottom)
-        self.mainLayout.addWidget(self.probabilities, 2, 10, 8, 2)
         self.mainLayout.addWidget(label, 3, 10, 1, 2, Qt.AlignmentFlag.AlignBottom)
-        self.mainLayout.addWidget(QTextBrowser(), 4, 10, 6, 3)
+        self.mainLayout.addWidget(self.probabilities, 4, 10, 9, 2)
+        #self.mainLayout.addWidget(label, 3, 10, 1, 2, Qt.AlignmentFlag.AlignBottom)
+        #self.mainLayout.addWidget(QTextBrowser(), 4, 10, 6, 3)
 
     def initCamera(self):
         self.camera = Camera(self)
