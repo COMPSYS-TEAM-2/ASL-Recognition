@@ -190,6 +190,7 @@ class Window(QMainWindow):
 
     def saveModel(self, name, model, epoch, batchSize, split):
         self.updateModel(name, model, epoch, batchSize, split)
+        self.modelsBox.removeItem(self.modelsBox.findText(name))
         self.modelsBox.addItem(name)
         f = open("./output/models.sav", 'w')
         for key, value in self.models.items():
