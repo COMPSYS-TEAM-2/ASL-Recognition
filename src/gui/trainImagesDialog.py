@@ -1,6 +1,6 @@
 from PyQt6.QtWidgets import QDialog, QLabel, QGridLayout, QScrollArea, QFormLayout, QGroupBox
 from PyQt6.QtGui import QPixmap
-from PyQt6.QtCore import QTimer
+from PyQt6.QtCore import QTimer, QCoreApplication
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -25,9 +25,11 @@ class TrainImagesDialog(QDialog):
         self.setLayout(self.mainLayout)
         self.show()
 
-        self._iter = iter(range(60000))
+        self.closeEvent = self.dialogClosed
+
+        self._iter = iter(range(10000))
         # Splitting image set into intervals of 1000
-        self._timer = QTimer(interval=3000, timeout=self.dynamic_loading)
+        self._timer = QTimer(interval=30, timeout=self.dynamic_loading)
         self._timer.start()
 
     def dynamic_loading(self):
@@ -42,7 +44,8 @@ class TrainImagesDialog(QDialog):
             w = 28
             h = 28
 
-            for i in range(0, 26):
+            for i in range(i):
+                QCoreApplication.processEvents()
                 sample = np.reshape(
                     data[data.columns[1:]].iloc[i].values/255, (w, h))
                 img = pil.fromarray(np.uint8(sample*255), 'L')
@@ -50,9 +53,12 @@ class TrainImagesDialog(QDialog):
                 #               QImage.Format.Format_Grayscale8)
                 qimg = ImageQt(img)
                 # qPixMap = QPixmap.fromImage(qImg.scaled(10*w, 10*h))
-                qPixMap = QPixmap.fromImage(qimg).scaled(5*w, 5*h)
+                qPixMap = QPixmap.fromImage(qimg).scaled(2*w, 2*h)
                 qPixMapLabel = QLabel()
                 qPixMapLabel.setPixmap(qPixMap)
                 self.scrollLayout.addRow(qPixMapLabel)
                 nameLabel = QLabel(alphabet[int(data["label"].iloc[i])])
                 self.scrollLayout.addRow(nameLabel)
+
+    def dialogClosed(self, event):
+        self._timer.stop()
