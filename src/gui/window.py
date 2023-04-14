@@ -1,27 +1,12 @@
-# For the layout of our pyqt window
-# Need to be able to save and load
-# Need to be able to download data
-# User can import dataset
-# User can see time left to finish import
-# User can stop the progress
-# User can view images of the train or test dataset
-# User can scroll up or down to view all the images
-# User can filter to see specific images
-# User can see simple statistics of the dataset
-
-# Therefore the initial window should have buttons to import data or view the dataset
-from PyQt6.QtWidgets import QMainWindow, QApplication, QPushButton, QLabel, QTextBrowser, QGridLayout, QWidget, QComboBox,QSlider
-from PyQt6.QtCore import Qt,QThreadPool
+from PyQt6.QtWidgets import QMainWindow, QApplication, QPushButton, QLabel, QTextBrowser, QGridLayout, QWidget, QComboBox, QSlider
+from PyQt6.QtCore import Qt, QThreadPool
 from PyQt6.QtGui import QAction
 from gui.camera import Camera
 from gui.errorDialog import ErrorDialog
+from gui.trainConfig import TrainConfig
 from gui.trainImagesDialog import TrainImagesDialog
 from gui.testImagesDialog import TestImagesDialog
-from gui.trainDialog import TrainDialog
 from neuralnet.network import Network
-from gui.trainWorker import TrainWorker
-
-
 
 
 class Window(QMainWindow):
@@ -33,16 +18,18 @@ class Window(QMainWindow):
 
         self.threadpool = QThreadPool()
         self.network = Network()
+        self.network.setSaveMethod(self.saveModel)
+
+        self.loadModels()
 
         self.initMainLayout()
         self.initTitle()
         self.initMenubar()
         self.initCamera()
         self.initButton()
-       # self.initTrainingSlider() # Could make errors
-        self.initModelSelector() #Could make errors
+        self.initModelSelector()
+        self.initInfo()
         self.initProbabilities()
-      
 
         self.show()
 
@@ -55,10 +42,11 @@ class Window(QMainWindow):
     def initTitle(self):
         self.font = self.font()
         self.title = QLabel("HAND AI")
-        self.font.setPointSize(64)
+        self.font.setPointSize(36)
         self.font.setBold(0)
         self.title.setFont(self.font)
-        self.mainLayout.addWidget(self.title,0,10,1,2,Qt.AlignmentFlag.AlignBottom.AlignCenter)
+        self.mainLayout.addWidget(
+            self.title, 0, 10, 2, 2, Qt.AlignmentFlag.AlignCenter)
 
     def initMenubar(self):
         # Quit Action (File)
@@ -93,7 +81,7 @@ class Window(QMainWindow):
     def initButton(self):
         self.takePhotoBtn = QPushButton('Take photo')
         self.mainLayout.addWidget(
-            self.takePhotoBtn, 2, 10, 1, 2, Qt.AlignmentFlag.AlignTop)
+            self.takePhotoBtn, 2, 10, 1, 2, Qt.AlignmentFlag.AlignBottom)
         self.takePhotoBtn.clicked.connect(self.camera.takePhoto)
         if (self.camera.availableCameras):
             self.camera.captureSession.imageCapture(
@@ -101,69 +89,58 @@ class Window(QMainWindow):
 
     def initModelSelector(self):
         # Combo button
-        self.models = QComboBox(self)
-        itemsList = ["LeNet", "AlexNet", "ResNet"]
-        self.models.addItems(itemsList)
+        self.modelsBox = QComboBox(self)
+        self.modelsBox.addItems(self.models)
         self.mainLayout.addWidget(
-            self.models, 2, 10, 1, 2, Qt.AlignmentFlag.AlignBottom)
+            self.modelsBox, 3, 10, 1, 2, Qt.AlignmentFlag.AlignTop)
+        self.modelsBox.currentTextChanged.connect(self.updateModelInfo)
 
-    def getComboButtonValue(self):
-        # Fetch the value from the combo button
-        return str(self.comboBtn.currentText())
-    
-    def initTrainingSlider(self):
+    def initInfo(self):
+        self.modelLabel = QLabel('Model:')
+        self.mainLayout.addWidget(
+            self.modelLabel, 4, 10, 1, 1, Qt.AlignmentFlag.AlignTop)
+        self.epochLabel = QLabel('Epoch:')
+        self.mainLayout.addWidget(
+            self.epochLabel, 4, 11, 1, 1, Qt.AlignmentFlag.AlignTop)
+        self.batchLabel = QLabel('Batch:')
+        self.mainLayout.addWidget(
+            self.batchLabel, 4, 10, 1, 1, Qt.AlignmentFlag.AlignBottom)
+        self.splitLabel = QLabel('Split:')
+        self.mainLayout.addWidget(
+            self.splitLabel, 4, 11, 1, 1, Qt.AlignmentFlag.AlignBottom)
+        self.updateModelInfo(self.modelsBox.currentText())
 
-        self.sliderLabel = QLabel("Percentage of Training set to use ?")
-        self.mainLayout.addWidget(self.sliderLabel,1,10,1,2,Qt.AlignmentFlag.AlignBottom)
-        self.slider = QSlider(Qt.Orientation.Horizontal)
-        self.slider.setMinimum(0)
-        self.slider.setMaximum(100)
-        self.slider.setValue(20)
-        self.slider.setTickPosition(QSlider.TickPosition.TicksBelow)
-        self.slider.setTickInterval(10)
-        self.mainLayout.addWidget(self.slider, 2, 10, 1, 2,Qt.AlignmentFlag.AlignBottom)
-        self.slider.valueChanged.connect(self.getSliderValue)
-        self.pcent = QLabel(str(self.getSliderValue()))
-        self.mainLayout.addWidget(self.pcent,2, 12, 1, 1,Qt.AlignmentFlag.AlignBottom)
-        
+    def updateModelInfo(self, name):
+        if name == None:
+            return
+        self.modelLabel.setText(f"Model: {self.models[name]['model']}")
+        self.epochLabel.setText(f"Epoch: {self.models[name]['epoch']}")
+        self.batchLabel.setText(f"Batch: {self.models[name]['batchSize']}")
+        self.splitLabel.setText(f"Split: {self.models[name]['split']}%")
 
-    def getSliderValue(self):
-        self.percentage = self.slider.value()
-        return self.percentage
-    
-        
-
-        
     def initProbabilities(self):
-        label = QLabel('Letter Probabilties')
+        label = QLabel('Letter Probabilties:')
         self.probabilities = QTextBrowser()
         self.probabilities.setText(
             "A:\nB:\nC:\nD:\nE:\nF:\nG:\nH:\nI:\nJ:\nK:\nL:\nM:\nN:\nO:\nP:\nQ:\nR:\nS:\nT:\nU:\nV:\nW:\nX:\nY:\nZ:")
         self.probabilities.append("\n\n<H1>Result:</H1>")
-        self.mainLayout.addWidget(label, 3, 10, 1, 2, Qt.AlignmentFlag.AlignBottom)
-        self.mainLayout.addWidget(self.probabilities, 4, 10, 9, 2)
-        #self.mainLayout.addWidget(label, 3, 10, 1, 2, Qt.AlignmentFlag.AlignBottom)
-        #self.mainLayout.addWidget(QTextBrowser(), 4, 10, 6, 3)
+        self.mainLayout.addWidget(
+            label, 5, 10, 1, 2, Qt.AlignmentFlag.AlignBottom)
+        self.mainLayout.addWidget(self.probabilities, 6, 10, 16, 2)
 
     def initCamera(self):
         self.camera = Camera(self)
-        self.mainLayout.addWidget(self.camera, 0, 0, 10, 10)
+        self.mainLayout.addWidget(self.camera, 0, 0, 22, 10)
 
     def getModel(self):
         # Fetch the value from the combo button
-        return self.models.currentText()
+        return self.models[self.modelsBox.currentText()]
 
     def errorPopup(self, message):
         ErrorDialog(message, self)
 
     def train(self):
-        dlg = TrainDialog(self)
-        worker = TrainWorker(self.network, self.getModel())
-        worker.signals.progress.connect(dlg.pbar.setValue)
-        worker.signals.message.connect(
-            dlg.textBrowserTrain.append)
-        dlg.setCancelFunc(self.network.cancel)
-        self.threadpool.start(worker)
+        TrainConfig(self)
 
     def showTrainImages(self):
         TrainImagesDialog(self)
@@ -192,3 +169,30 @@ class Window(QMainWindow):
         appendResultString = str(
             "\n\n<H1>Result: " + chr(prediction + ord('A')) + "</H1>")
         self.probabilities.append(appendResultString)
+
+    def loadModels(self):
+        self.models = {}
+        try:
+            f = open("./output/models.sav", 'r')
+            lines = f.read().split("\n")
+            for line in lines:
+                if len(line) == 0:
+                    continue
+                name, model, epoch, batchSize, split = line.split(",")
+                self.updateModel(name, model, epoch, batchSize, split)
+            f.close()
+        except FileNotFoundError:
+            pass
+
+    def updateModel(self, name, model, epoch, batchSize, split):
+        self.models[name] = {
+            "model": model, "epoch": epoch, "batchSize": batchSize, "split": split}
+
+    def saveModel(self, name, model, epoch, batchSize, split):
+        self.updateModel(name, model, epoch, batchSize, split)
+        self.modelsBox.addItem(name)
+        f = open("./output/models.sav", 'w')
+        for key, value in self.models.items():
+            f.write(
+                f"{key},{value['model']},{value['epoch']},{value['batchSize']},{value['split']}\n")
+        f.close()

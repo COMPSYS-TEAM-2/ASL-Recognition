@@ -62,7 +62,9 @@ class Camera(QWidget):
     def predictImage(self, image):
         try:
             # Load model takes name as an input, set this to be the value from the combobox
-            self.win.network.load_model(self.win.getModel())
+            name = self.win.getModel()
+            model = self.win.models[name]["model"]
+            self.win.network.load_model(name, model)
             result = self.win.network.test(image)
             _, prediction = max(result, 1)
             # Result is an array of all the probablilities

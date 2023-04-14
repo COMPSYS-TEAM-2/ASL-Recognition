@@ -1,0 +1,98 @@
+# Therefore the initial window should have buttons to import data or view the dataset
+from PyQt6.QtWidgets import QDialog, QPushButton, QLabel, QLineEdit, QSlider, QComboBox
+from PyQt6.QtGui import QIntValidator
+from PyQt6.QtCore import Qt
+
+from gui.trainDialog import TrainDialog
+from gui.trainWorker import TrainWorker
+
+
+class TrainConfig(QDialog):
+    def __init__(self, parent=None):
+        super().__init__(parent=parent)
+        self.setWindowTitle("Train a Model")
+        self.setFixedSize(300, 185)  # TODO Fix size
+        self.initBatchSize()
+        self.initEpochs()
+        self.initSlider()
+        self.initModelSelector()
+        self.initName()
+        self.initButtons()
+        self.show()
+
+    def initBatchSize(self):
+        self.batch_size_label = QLabel('Batch Size:', self)
+        self.batch_size_label.move(5, 5)
+        self.batch_size_line = QLineEdit('4', self)
+        self.batch_size_line.setValidator(QIntValidator(1, 9999))
+        self.batch_size_line.move(70, 5)
+        self.batch_size_line.resize(225, 20)
+
+    def initEpochs(self):
+        self.epoch_label = QLabel('Epoch:', self)
+        self.epoch_label.move(5, 35)
+        self.epoch_line = QLineEdit('5', self)
+        self.epoch_line.setValidator(QIntValidator(1, 9999))
+        self.epoch_line.move(70, 35)
+        self.epoch_line.resize(225, 20)
+
+    def initSlider(self):
+        self.slider_label = QLabel(
+            'Training Split: 100%', self)
+        self.slider_label.move(5, 65)
+        self.slider = QSlider(Qt.Orientation.Horizontal, self)
+        self.slider.move(5, 80)
+        self.slider.resize(290, 20)
+        self.slider.setSingleStep(1)
+        self.slider.setRange(1, 100)
+        self.slider.setValue(100)
+        self.slider.valueChanged.connect(
+            lambda value: self.slider_label.setText(f"Training Split: {value}%"))
+
+    def initModelSelector(self):
+        itemsList = ["LeNet", "AlexNet", "ResNet"]
+        self.model_label = QLabel('Model:', self)
+        self.model_label.move(5, 100)
+        self.models = QComboBox(self)
+        self.models.addItems(itemsList)
+        self.models.resize(225, 20)
+        self.models.move(70, 100)
+
+    def getModel(self):
+        return self.models.currentText()
+
+    def initName(self):
+        self.name_label = QLabel('Name:', self)
+        self.name_label.move(5, 130)
+        self.name_line = QLineEdit(f'{self.models.currentText()}', self)
+        self.models.currentTextChanged.connect(
+            lambda value: self.name_line.setText(f"{value}"))
+        self.name_line.move(70, 130)
+        self.name_line.resize(225, 20)
+
+    def initButtons(self):
+        # Train Button
+        self.train_btn = QPushButton('Train', self)
+        self.train_btn.resize(95, 20)
+        self.train_btn.move(100, 160)
+        self.train_btn.clicked.connect(self.train)
+
+        # Cancel Button
+        self.cancel_btn = QPushButton('Cancel', self)
+        self.cancel_btn.resize(95, 20)
+        self.cancel_btn.move(200, 160)
+        self.cancel_btn.clicked.connect(self.close)
+
+    def train(self):
+        win = self.parent()
+        dlg = TrainDialog(win)
+        worker = TrainWorker(win.network, self.getModel(), int(
+            self.epoch_line.text()), int(self.batch_size_line.text()), self.slider.value(), self.name_line.text())
+        worker.signals.progress.connect(dlg.pbar.setValue)
+        worker.signals.message.connect(
+            dlg.textBrowserTrain.append)
+        worker.signals.timer.connect(dlg.setTime)
+        worker.signals.finished.connect(lambda: dlg.cancel_btn.setText("Finish"))
+        dlg.setCancelFunc(win.network.cancel)
+        win.threadpool.start(worker)
+        self.close()
