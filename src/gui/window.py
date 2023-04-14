@@ -111,7 +111,7 @@ class Window(QMainWindow):
         self.updateModelInfo(self.modelsBox.currentText())
 
     def updateModelInfo(self, name):
-        if name == None:
+        if not name:
             return
         self.modelLabel.setText(f"Model: {self.models[name]['model']}")
         self.epochLabel.setText(f"Epoch: {self.models[name]['epoch']}")
@@ -134,7 +134,7 @@ class Window(QMainWindow):
 
     def getModel(self):
         # Fetch the value from the combo button
-        return self.models[self.modelsBox.currentText()]
+        return self.modelsBox.currentText()
 
     def errorPopup(self, message):
         ErrorDialog(message, self)

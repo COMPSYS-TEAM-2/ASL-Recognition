@@ -57,7 +57,7 @@ class Camera(QWidget):
 
     def handleCapture(self, id: int, capture: QImage):
         image = prepareImage(capture)
-        print(self.predictImage(image))
+        self.predictImage(image)
 
     def predictImage(self, image):
         try:
@@ -70,7 +70,5 @@ class Camera(QWidget):
             # Result is an array of all the probablilities
             # This can be passed to the window in order to fill the percentages box
             self.win.updatePercentages(result, prediction)
-            return chr(prediction + ord('A'))
         except:
             self.win.errorPopup("Unable to find model")
-        return "Error"
