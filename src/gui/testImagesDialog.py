@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import QDialog, QLabel, QGridLayout, QScrollArea, QFormLayout, QGroupBox, QLineEdit
+from PyQt6.QtWidgets import QDialog, QLabel, QGridLayout, QScrollArea, QFormLayout, QGroupBox, QLineEdit, QTextBrowser
 from PyQt6.QtGui import QPixmap
 from PyQt6.QtCore import QTimer, QCoreApplication
 import pandas as pd
@@ -19,8 +19,16 @@ class TestImagesDialog(QDialog):
         self.lineEdit = QLineEdit()
         self.lineEdit.textChanged.connect(self.lineEditChanged)
         self.currentFilter = ""
-        self.mainLayout.addWidget(self.inputBoxLabel)
-        self.mainLayout.addWidget(self.lineEdit)
+        self.quantityLabel = QLabel("Quantities")
+        self.quantities = QTextBrowser()
+        self.quantities.setText(
+            "A:\nB:\nC:\nD:\nE:\nF:\nG:\nH:\nI:\nJ:\nK:\nL:\nM:\nN:\nO:\nP:\nQ:\nR:\nS:\nT:\nU:\nV:\nW:\nX:\nY:\nZ:")
+        self.letterQuantities = [0]*26
+        self.mainLayout.addWidget(self.inputBoxLabel, 0, 0)
+        self.mainLayout.addWidget(self.lineEdit, 1, 0)
+        self.mainLayout.addWidget(self.quantityLabel, 1, 1)
+        self.mainLayout.addWidget(self.scrollArea, 2, 0)
+        self.mainLayout.addWidget(self.quantities, 2, 1)
 
         groupBox = QGroupBox()
         groupBox.setLayout(self.scrollLayout)
@@ -50,6 +58,9 @@ class TestImagesDialog(QDialog):
 
             for i in range(i):
                 if alphabet[int(data["label"].iloc[i])] == self.currentFilter or self.currentFilter == "":
+                    self.letterQuantities[int(data["label"].iloc[i])] += 1
+                    # Update text browser
+                    self.updateTextBrowser(alphabet)
                     QCoreApplication.processEvents()
                     sample = np.reshape(
                         data[data.columns[1:]].iloc[i].values/255, (w, h))
@@ -78,6 +89,13 @@ class TestImagesDialog(QDialog):
         self._timer.start()
 
     def clearWindow(self):
+        self.letterQuantities = [0]*26
         # Clear the window
         for i in reversed(range(self.scrollLayout.count())):
             self.scrollLayout.itemAt(i).widget().setParent(None)
+
+    def updateTextBrowser(self, letters):
+        self.quantities.clear()
+        for i, letter in enumerate(letters):
+            appendString = str(letter + ": " + str(self.letterQuantities[i]))
+            self.quantities.append(appendString)
