@@ -1,3 +1,5 @@
+import datetime
+import os
 from PIL import Image, ImageFilter
 import numpy as np
 from torch import FloatTensor
@@ -19,13 +21,11 @@ def prepareImage(image: QImage):
     # creates white canvas of 28x28 pixels
     new_image = Image.new('L', (28, 28), (255))
 
-    if width > height:  # check which dimension is bigger
-        # Width is bigger. Width becomes 20 pixels.
-        # resize height according to ratio width
+    if width < height:  # check which dimension is bigger
+        # Width is smaller. Width becomes 28 pixels.
+        # resize height according to ratio width and crop the edges
         nheight = int(round((28.0 / width * height), 0))
-        if (nheight == 0):  # rare case but minimum is 1 pixel
-            nheight = 1
-            # resize and sharpen
+        # resize and sharpen
         img = im.resize((28, nheight), Image.ANTIALIAS).filter(
             ImageFilter.SHARPEN)
         # calculate horizontal position
@@ -36,16 +36,23 @@ def prepareImage(image: QImage):
         # Height is bigger. Heigth becomes 20 pixels.
         # resize width according to ratio height
         nwidth = int(round((28.0 / height * width), 0))
-        if (nwidth == 0):  # rare case but minimum is 1 pixel
-            nwidth = 1
-            # resize and sharpen
+        # resize and sharpen
         img = im.resize((nwidth, 28), Image.ANTIALIAS).filter(
             ImageFilter.SHARPEN)
         # caculate vertical pozition
         wleft = int(round(((28 - nwidth) / 2), 0))
         # paste resized image on white canvas
         new_image.paste(img, (wleft, 0))
-
+    try:
+        os.mkdir("./output")
+    except:
+        pass
+    try:
+        os.mkdir("./output/photos")
+    except:
+        pass
+    new_image.save(
+        f"./output/photos/{datetime.datetime.now().strftime('%m-%d-%Y_%H-%M-%S')}.png")
     pixels = list(new_image.getdata())  # get pixel values
     pixels_normalized = [x / 255.0 for x in pixels]
 
