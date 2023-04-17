@@ -3,9 +3,8 @@ from PyQt6.QtCore import Qt, QThreadPool
 from PyQt6.QtGui import QAction
 from gui.camera import Camera
 from gui.errorDialog import ErrorDialog
+from gui.imagesDialog import ImagesDialog
 from gui.trainConfig import TrainConfig
-from gui.trainImagesDialog import TrainImagesDialog
-from gui.testImagesDialog import TestImagesDialog
 from neuralnet.network import Network
 
 
@@ -143,10 +142,10 @@ class Window(QMainWindow):
         TrainConfig(self)
 
     def showTrainImages(self):
-        TrainImagesDialog(self)
+        ImagesDialog(self)
 
     def showTestImages(self):
-        TestImagesDialog(self)
+        ImagesDialog(self, True)
 
     def updatePercentages(self, results, prediction):
         lettersArray = ["A: ", "B: ", "C: ", "D: ", "E: ", "F: ", "G: ", "H: ", "I: ", "J: ", "K: ", "L: ",
