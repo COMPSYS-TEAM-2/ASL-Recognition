@@ -118,8 +118,6 @@ class Network():
         except:
             pass
         self.save_method(name, model, epoch, batch_size, split)
-        name = f"{name}_{model}_eph-{epoch}_btch-{batch_size}_spt-{split}"
-
         torch.save(self.model.state_dict(), f"output/models/{name}.pth")
 
     def load_model(self,name, model):
