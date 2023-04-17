@@ -11,7 +11,7 @@ class TrainConfig(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         self.setWindowTitle("Train a Model")
-        self.setFixedSize(300, 185)  # TODO Fix size
+        self.setFixedSize(350, 190)  # TODO Fix size
         self.initBatchSize()
         self.initEpochs()
         self.initSlider()
@@ -25,24 +25,24 @@ class TrainConfig(QDialog):
         self.batch_size_label.move(5, 5)
         self.batch_size_line = QLineEdit('4', self)
         self.batch_size_line.setValidator(QIntValidator(1, 9999))
-        self.batch_size_line.move(70, 5)
-        self.batch_size_line.resize(225, 20)
+        self.batch_size_line.move(80, 5)
+        self.batch_size_line.resize(250, 20)
 
     def initEpochs(self):
         self.epoch_label = QLabel('Epoch:', self)
         self.epoch_label.move(5, 35)
         self.epoch_line = QLineEdit('5', self)
         self.epoch_line.setValidator(QIntValidator(1, 9999))
-        self.epoch_line.move(70, 35)
-        self.epoch_line.resize(225, 20)
+        self.epoch_line.move(80, 35)
+        self.epoch_line.resize(250, 20)
 
     def initSlider(self):
         self.slider_label = QLabel(
             'Training Split: 100%', self)
         self.slider_label.move(5, 65)
         self.slider = QSlider(Qt.Orientation.Horizontal, self)
-        self.slider.move(5, 80)
-        self.slider.resize(290, 20)
+        self.slider.move(10, 80)
+        self.slider.resize(325, 20)
         self.slider.setSingleStep(1)
         self.slider.setRange(1, 100)
         self.slider.setValue(100)
@@ -55,8 +55,8 @@ class TrainConfig(QDialog):
         self.model_label.move(5, 100)
         self.models = QComboBox(self)
         self.models.addItems(itemsList)
-        self.models.resize(225, 20)
-        self.models.move(70, 100)
+        self.models.resize(250, 20)
+        self.models.move(80, 100)
 
     def getModel(self):
         return self.models.currentText()
@@ -67,8 +67,8 @@ class TrainConfig(QDialog):
         self.name_line = QLineEdit(f'{self.models.currentText()}', self)
         self.models.currentTextChanged.connect(
             lambda value: self.name_line.setText(f"{value}"))
-        self.name_line.move(70, 130)
-        self.name_line.resize(225, 20)
+        self.name_line.move(80, 130)
+        self.name_line.resize(250, 20)
 
     def initButtons(self):
         # Train Button
