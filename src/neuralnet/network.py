@@ -153,3 +153,13 @@ class Network():
                 self.test_df_mnist, batch_size=1, shuffle=True)
         except:
             pass
+
+    # Function to help the user import their own dataset
+    def importTrainDataset(self):
+        # Logic
+        pass
+
+    # Function to help the user import their own dataset
+    def importTestDataset(self):
+        # Logic
+        pass
