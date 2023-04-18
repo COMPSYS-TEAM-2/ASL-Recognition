@@ -1,10 +1,12 @@
 from PyQt6.QtWidgets import QDialog, QLabel, QGridLayout, QScrollArea, QFormLayout, QGroupBox, QLineEdit, QTextBrowser, QCheckBox, QPushButton
 from PyQt6.QtGui import QPixmap
-from PyQt6.QtCore import QTimer, QCoreApplication
+from PyQt6.QtCore import QTimer
 import pandas as pd
 import numpy as np
 import PIL.Image as pil
 from PIL.ImageQt import ImageQt
+
+from neuralnet.mnist import MNIST
 
 
 class ImagesDialog(QDialog):
@@ -61,6 +63,10 @@ class ImagesDialog(QDialog):
         self.mainLayout.addWidget(self.testButton, 0, 6, 1, 2)
 
     def dynamic_loading(self):
+        if (self.i >= len(self.data)):
+            self.stopTimer()
+            return
+
         alphabet = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L",
                     "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"]
         w = 28
@@ -68,20 +74,18 @@ class ImagesDialog(QDialog):
         i = self.i
         self.clear = False
 
-        self.letterQuantities[int(self.data["label"].iloc[i])] += 1
+        self.letterQuantities[int(self.data.iloc[i, 0])] += 1
         self.updateTextBrowser(alphabet)
 
-        if alphabet[int(self.data["label"].iloc[i])] == self.currentFilter or self.currentFilter == "":
-            # Update text browser
-            QCoreApplication.processEvents()
+        if alphabet[int(self.data.iloc[i, 0])] == self.currentFilter or self.currentFilter == "":
             sample = np.reshape(
-                self.data[self.data.columns[1:]].iloc[i].values, (w, h))
+                self.data.iloc[i, 1:].values, (w, h))
             img = pil.fromarray(np.uint8(sample), 'L')
             qimg = ImageQt(img)
             qPixMap = QPixmap.fromImage(qimg).scaled(4*w, 4*h)
             qPixMapLabel = QLabel()
             qPixMapLabel.setPixmap(qPixMap)
-            nameLabel = QLabel(alphabet[int(self.data['label'].iloc[i])])
+            nameLabel = QLabel(alphabet[int(self.data.iloc[i, 0])])
 
             checkbox = QCheckBox()
             checkbox.clicked.connect(
@@ -134,4 +138,18 @@ class ImagesDialog(QDialog):
                 self.selection.remove(index)
 
     def test(self):
-        print(self.selection)
+        window = self.parent()
+        if (not len(self.selection)):
+            window.messageDialog(
+                "Error!", "No images were selected to test.")
+            return
+        try:
+            window.loadModel()
+            images = self.data.iloc[self.selection]
+            images = MNIST(images)
+            correct, total = window.network.test_all(images, False)
+            window.messageDialog(
+                "Results", f"{correct}/{total} images were correctly classified.")
+        except:
+            window.messageDialog(
+                "Error!", "Unable to find model")

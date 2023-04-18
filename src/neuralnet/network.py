@@ -78,14 +78,16 @@ class Network():
         pbar.emit(99)
         message.emit("\nTesting model...")
         if (SPLIT != 100):
-            message.emit(self.test_all(test_data))
-        message.emit(self.test_all())
+            message.emit(
+                f"Accuracy of the network on the remaining train images: {self.test_all(test_data)} %")
+        message.emit(
+            f"Accuracy of the network on the test images: {self.test_all()} %")
 
         self.save_model(name, model, EPOCH, BATCH_SIZE, SPLIT)
         message.emit(f"\n{name} trained and saved!")
         pbar.emit(100)
 
-    def test_all(self, train=None):
+    def test_all(self, train=None, percentage=True):
         # Tests the current model with the test data by default. If train is set to true then will test the model with the training data
         loader = self.testloader
         if (train):
@@ -101,7 +103,10 @@ class Network():
                 total += labels.size(0)
                 correct += (predicted == labels).sum().item()
                 # TODO limit number of decimal points
-            return f"Accuracy of the network on the {'remaining train' if(train) else 'test'} images: {correct/total * 100} %"
+            if percentage:
+                return round(correct/total * 100, 2)
+            else:
+                return correct, total
 
     def test(self, image):
         return self.model(image)
@@ -120,7 +125,7 @@ class Network():
         self.save_method(name, model, epoch, batch_size, split)
         torch.save(self.model.state_dict(), f"output/models/{name}.pth")
 
-    def load_model(self,name, model):
+    def load_model(self, name, model):
         # Loads the model under the given name.
         # If there are errors it will train the model
         # Default name is "model"

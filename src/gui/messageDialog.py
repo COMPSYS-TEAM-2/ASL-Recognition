@@ -2,11 +2,11 @@ from PyQt6.QtWidgets import QPushButton, QDialog, QLabel, QGridLayout
 from PyQt6.QtCore import Qt
 
 
-class ErrorDialog(QDialog):
+class MessageDialog(QDialog):
     # Dialog to train the database
-    def __init__(self,message, parent=None):
+    def __init__(self, parent=None, title="", message=""):
         super().__init__(parent)
-        self.setWindowTitle("Error!")
+        self.setWindowTitle(title)
 
         self.mainLayout = QGridLayout()
 

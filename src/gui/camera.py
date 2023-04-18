@@ -53,7 +53,7 @@ class Camera(QWidget):
         try:
             self.captureSession.imageCapture().capture()
         except AttributeError:
-            self.win.errorPopup("No camera detected")
+            self.win.messageDialog("Error!", "No camera detected")
 
     def handleCapture(self, id: int, capture: QImage):
         image = prepareImage(capture)
@@ -62,13 +62,11 @@ class Camera(QWidget):
     def predictImage(self, image):
         try:
             # Load model takes name as an input, set this to be the value from the combobox
-            name = self.win.getModel()
-            model = self.win.models[name]["model"]
-            self.win.network.load_model(name, model)
+            self.win.loadModel()
             result = self.win.network.test(image)
             _, prediction = max(result, 1)
             # Result is an array of all the probablilities
             # This can be passed to the window in order to fill the percentages box
             self.win.updatePercentages(result, prediction)
         except:
-            self.win.errorPopup("Unable to find model")
+            self.win.messageDialog("Error!", "Unable to find model")

@@ -2,7 +2,7 @@ from PyQt6.QtWidgets import QMainWindow, QApplication, QPushButton, QLabel, QTex
 from PyQt6.QtCore import Qt, QThreadPool
 from PyQt6.QtGui import QAction
 from gui.camera import Camera
-from gui.errorDialog import ErrorDialog
+from gui.messageDialog import MessageDialog
 from gui.imagesDialog import ImagesDialog
 from gui.trainConfig import TrainConfig
 from neuralnet.network import Network
@@ -135,8 +135,8 @@ class Window(QMainWindow):
         # Fetch the value from the combo button
         return self.modelsBox.currentText()
 
-    def errorPopup(self, message):
-        ErrorDialog(message, self)
+    def messageDialog(self, title, message):
+        MessageDialog(self, title, message)
 
     def train(self):
         TrainConfig(self)
@@ -196,3 +196,8 @@ class Window(QMainWindow):
             f.write(
                 f"{key},{value['model']},{value['epoch']},{value['batchSize']},{value['split']}\n")
         f.close()
+
+    def loadModel(self):
+        name = self.getModel()
+        model = self.models[name]["model"]
+        self.network.load_model(name, model)
