@@ -2,6 +2,7 @@ from torch.nn import Conv2d, Sequential, Module, BatchNorm2d, ReLU, MaxPool2d, L
 
 
 class ResNet(Module):
+    # Scaled down ResNet model for MNIST data
     def __init__(self):
         super(ResNet, self).__init__()
         block = ResidualBlock

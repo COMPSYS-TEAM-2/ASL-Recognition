@@ -9,8 +9,10 @@ from image.image import prepareImage
 
 
 class Camera(QWidget):
-
     def __init__(self, win):
+        """
+        Initializes the camera widget.
+        """
         super(Camera, self).__init__()
         self.initPalette()
         self.initMainLayout()
@@ -18,10 +20,16 @@ class Camera(QWidget):
         self.win = win
 
     def initMainLayout(self):
+        """
+        Initializes the main layout of the widget.
+        """
         self.setLayout(QGridLayout())
         self.layout().setContentsMargins(0, 0, 0, 0)
 
     def initPalette(self):
+        """
+        Initializes the palette of the widget.
+        """
         self.setAutoFillBackground(True)
         palette = self.palette()
         palette.setColor(QPalette.ColorRole.Window, QColor("black"))
@@ -29,6 +37,9 @@ class Camera(QWidget):
         self.setPalette(palette)
 
     def initCamera(self):
+        """
+        Initializes the camera.
+        """
         self.availableCameras = QMediaDevices.videoInputs()
         if not self.availableCameras:
             label = QLabel('No Camera Detected')
@@ -50,16 +61,26 @@ class Camera(QWidget):
         camera.start()
 
     def takePhoto(self):
+        """
+        Takes a photo using the camera.
+        """
         try:
             self.captureSession.imageCapture().capture()
         except AttributeError:
             self.win.messageDialog("Error!", "No camera detected")
 
     def handleCapture(self, id: int, capture: QImage):
+        """
+        On camera capture, this function is called.
+        It prepates and predicts the result of the captured image.
+        """
         image = prepareImage(capture)
         self.predictImage(image)
 
     def predictImage(self, image):
+        """
+        Predicts the image using the loaded model.
+        """
         try:
             # Load model takes name as an input, set this to be the value from the combobox
             self.win.loadModel()

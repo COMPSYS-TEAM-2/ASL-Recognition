@@ -3,8 +3,14 @@ from PyQt6.QtCore import Qt
 
 
 class MessageDialog(QDialog):
-    # Dialog to train the database
+    """
+    A general message dialog.
+    """
+
     def __init__(self, parent=None, title="", message=""):
+        """
+        Inintializes the dialog with the given title and message.
+        """
         super().__init__(parent)
         self.setWindowTitle(title)
 

@@ -4,6 +4,9 @@ from PyQt6.QtCore import Qt
 
 
 def setPalette(app):
+    """
+    Sets the palette of the application
+    """
     app.setStyle("Fusion")
     palette = QPalette()
     palette.setColor(QPalette.ColorRole.Window, QColor(53, 53, 53))
