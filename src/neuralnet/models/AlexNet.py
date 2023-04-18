@@ -3,6 +3,7 @@ from torch.nn import Conv2d, Sequential, Module, BatchNorm2d, ReLU, MaxPool2d, D
 
 
 class AlexNet(Module):
+    # Scaled down AlexNet model for MNIST data
     def __init__(self):
         super(AlexNet, self).__init__()
         self.layer1 = Sequential(

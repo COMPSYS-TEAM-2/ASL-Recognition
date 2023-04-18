@@ -15,18 +15,27 @@ from neuralnet.models.ResNet import ResNet
 
 class Network():
     def __init__(self):
-        # Initialises a new Network instance which loads asl data
+        """
+        Initialises a new Network instance which loads the datasets if they exist.
+        """
         self.loadDatasets()
 
     def setSaveMethod(self, save_method):
+        """
+        Sets the save method from the window to be used by the network class.
+        """
         self.save_method = save_method
 
     def train(self, model, name, pbar: pyqtSignal, message: pyqtSignal, timer: pyqtSignal, EPOCH=5, BATCH_SIZE=4, SPLIT=100):
-
+        """
+        Trains the model with the given parameters, emits the progress to the progressbar, the message to the message box and saves the model.
+        """
         message.emit(f"Training {name}...\n")
 
         self.switchModel(model)
+
         if (SPLIT != 100):
+            # Randomly splits the dataset into a training and testing set with the given split
             train_data, test_data = random_split(
                 self.train_df_mnist, [SPLIT/100, 1-SPLIT/100])
         else:
@@ -45,6 +54,7 @@ class Network():
             for i, data in enumerate(trainloader):
 
                 if self.stop == True:
+                    # Check if the stop flag is true and if so, stop the training
                     raise StopIteration
 
                 inputs, labels = data
@@ -58,13 +68,14 @@ class Network():
                 # print statistics
                 running_loss += loss.item()
                 if i % 800 == 799:
-                    # Call to the progressbar to update it's progress
+                    # Call to the message box and display the loss
                     message.emit('Epoch: %d/%d, Image: %5d, loss: %.3f' %
                                  (epoch + 1, EPOCH, (i + 1) * BATCH_SIZE,
                                   running_loss / 800)
                                  )
                     running_loss = 0.0
                 if i % 300 == 0 and i != 0:
+                    # Call to the progressbar to update it's progress
                     length = len(trainloader)
                     percentage = (i + epoch * length) / (length * EPOCH)
                     pbar.emit(percentage * 100)
@@ -83,11 +94,16 @@ class Network():
         message.emit(f"\n{name} trained and saved!")
         pbar.emit(100)
 
-    def test_all(self, train=None, percentage=True):
-        # Tests the current model with the test data by default. If train is set to true then will test the model with the training data
+    def test_all(self, dataset=None, percentage=True):
+        """
+        Tests the current model with the test data by default.
+        If a dataset is supplied then it will test the model with the dataset.
+        If percentage is True then it will return the percentage of correct predictions.
+        If percentage is False then it will return the number of correct predictions and the total number of predictions.
+        """
         loader = self.testloader
-        if (train):
-            loader = DataLoader(train, batch_size=1, shuffle=True)
+        if (dataset):
+            loader = DataLoader(dataset, batch_size=1, shuffle=True)
 
         correct = 0
         total = 0
@@ -98,18 +114,19 @@ class Network():
                 _, predicted = torch.max(outputs.data, 1)
                 total += labels.size(0)
                 correct += (predicted == labels).sum().item()
-                # TODO limit number of decimal points
             if percentage:
                 return round(correct/total * 100, 2)
             else:
                 return correct, total
 
     def test(self, image):
+        """Tests the current model with the given image"""
         return self.model(image)
 
     def save_model(self, name, model, epoch, batch_size, split):
-        # Saves the model under the given name
-        # Default name is "model"
+        """
+        Saves the model under the given name with the given parameters.
+        """
         try:
             os.mkdir("./output")
         except:
@@ -122,14 +139,15 @@ class Network():
         torch.save(self.model.state_dict(), f"output/models/{name}.pth")
 
     def load_model(self, name, model):
-        # Loads the model under the given name.
-        # If there are errors it will train the model
-        # Default name is "model"
+        """
+        Loads the model under the given name.
+        """
         self.switchModel(model)
         self.model.load_state_dict(
             torch.load(f"output/models/{name}.pth"))
 
     def switchModel(self, name: str):
+        """Switches the model to the given name"""
         name = name.lower()
         if name == "lenet":
             self.model = LeNet()
@@ -141,9 +159,11 @@ class Network():
             self.model = LeNet()
 
     def cancel(self):
+        """Stops the training process on another thread"""
         self.stop = True
 
     def loadDatasets(self):
+        """Loads the datasets if they exist"""
         try:
             #
             #
@@ -160,6 +180,7 @@ class Network():
                 pd.read_csv("./data/sign_mnist_test.csv"))
             self.testloader = DataLoader(
                 self.test_df_mnist, batch_size=1, shuffle=True)
+            self.dataset = True
         except:
             pass
 

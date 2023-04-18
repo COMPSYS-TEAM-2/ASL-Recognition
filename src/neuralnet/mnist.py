@@ -1,7 +1,9 @@
 from torch.utils.data import Dataset
 import torch
 
+
 class MNIST(Dataset):
+    # A Class to represent the MNIST dataset
     def __init__(self, df):
         self.rows = len(df)
         self.imgnp = df.iloc[:self.rows, 1:].values

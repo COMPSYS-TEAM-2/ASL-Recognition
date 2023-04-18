@@ -21,28 +21,30 @@ def prepareImage(image: QImage):
     # creates white canvas of 28x28 pixels
     new_image = Image.new('L', (28, 28), (255))
 
-    if width < height:  # check which dimension is bigger
+    if width < height:
+        # check which dimension is bigger
         # Width is smaller. Width becomes 28 pixels.
         # resize height according to ratio width and crop the edges
         nheight = int(round((28.0 / width * height), 0))
         # resize and sharpen
         img = im.resize((28, nheight), Image.ANTIALIAS).filter(
             ImageFilter.SHARPEN)
-        # calculate horizontal position
+        # calculate vertical position
         wtop = int(round(((28 - nheight) / 2), 0))
         # paste resized image on white canvas
         new_image.paste(img, (0, wtop))
     else:
-        # Height is bigger. Heigth becomes 20 pixels.
-        # resize width according to ratio height
+        # Height is smaller. Height becomes 28 pixels.
+        # resize width according to ratio height and crop the tops and bottoms
         nwidth = int(round((28.0 / height * width), 0))
         # resize and sharpen
         img = im.resize((nwidth, 28), Image.ANTIALIAS).filter(
             ImageFilter.SHARPEN)
-        # caculate vertical pozition
+        # caculate horizontal pozition
         wleft = int(round(((28 - nwidth) / 2), 0))
         # paste resized image on white canvas
         new_image.paste(img, (wleft, 0))
+    # Save the photo
     try:
         os.mkdir("./output")
     except:
@@ -55,5 +57,5 @@ def prepareImage(image: QImage):
         f"./output/photos/{datetime.datetime.now().strftime('%m-%d-%Y_%H-%M-%S')}.png")
     pixels = list(new_image.getdata())  # get pixel values
     pixels_normalized = [x / 255.0 for x in pixels]
-
+    # Return MNIST tensor
     return FloatTensor(pixels_normalized).view(1, 1, 28, 28)

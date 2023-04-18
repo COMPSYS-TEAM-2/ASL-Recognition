@@ -9,9 +9,12 @@ from gui.trainWorker import TrainWorker
 
 class TrainConfig(QDialog):
     def __init__(self, parent=None):
+        """
+        Initializes the training configuration dialog.
+        """
         super().__init__(parent=parent)
         self.setWindowTitle("Train a Model")
-        self.setFixedSize(350, 190)  # TODO Fix size
+        self.setFixedSize(350, 190)
         self.initBatchSize()
         self.initEpochs()
         self.initSlider()
@@ -21,6 +24,9 @@ class TrainConfig(QDialog):
         self.show()
 
     def initBatchSize(self):
+        """
+        Initializes the batch size input.
+        """
         self.batch_size_label = QLabel('Batch Size:', self)
         self.batch_size_label.move(5, 5)
         self.batch_size_line = QLineEdit('4', self)
@@ -29,6 +35,9 @@ class TrainConfig(QDialog):
         self.batch_size_line.resize(250, 20)
 
     def initEpochs(self):
+        """
+        Initializes the epochs input.
+        """
         self.epoch_label = QLabel('Epoch:', self)
         self.epoch_label.move(5, 35)
         self.epoch_line = QLineEdit('5', self)
@@ -37,6 +46,9 @@ class TrainConfig(QDialog):
         self.epoch_line.resize(250, 20)
 
     def initSlider(self):
+        """
+        Initializes the slider for the training split.
+        """
         self.slider_label = QLabel(
             'Training Split: 100%', self)
         self.slider_label.move(5, 65)
@@ -50,6 +62,9 @@ class TrainConfig(QDialog):
             lambda value: self.slider_label.setText(f"Training Split: {value}%"))
 
     def initModelSelector(self):
+        """
+        Initializes the model selector input.
+        """
         itemsList = ["LeNet", "AlexNet", "ResNet"]
         self.model_label = QLabel('Model:', self)
         self.model_label.move(5, 100)
@@ -59,9 +74,15 @@ class TrainConfig(QDialog):
         self.models.move(80, 100)
 
     def getModel(self):
+        """
+        Returns the model selected in the model selector.
+        """
         return self.models.currentText()
 
     def initName(self):
+        """
+        Initializes the name input.
+        """
         self.name_label = QLabel('Name:', self)
         self.name_label.move(5, 130)
         self.name_line = QLineEdit(f'{self.models.currentText()}', self)
@@ -71,6 +92,9 @@ class TrainConfig(QDialog):
         self.name_line.resize(250, 20)
 
     def initButtons(self):
+        """
+        Initializes the train and cancel buttons.
+        """
         # Train Button
         self.train_btn = QPushButton('Train', self)
         self.train_btn.resize(95, 20)
@@ -84,6 +108,9 @@ class TrainConfig(QDialog):
         self.cancel_btn.clicked.connect(self.close)
 
     def train(self):
+        """
+        Starts the training process on the seperate thread and creates a new training dialog which shows training progress.
+        """
         win = self.parent()
         dlg = TrainDialog(win)
         worker = TrainWorker(win.network, self.getModel(), int(
@@ -92,7 +119,8 @@ class TrainConfig(QDialog):
         worker.signals.message.connect(
             dlg.textBrowserTrain.append)
         worker.signals.timer.connect(dlg.setTime)
-        worker.signals.finished.connect(lambda: dlg.cancel_btn.setText("Finish"))
+        worker.signals.finished.connect(
+            lambda: dlg.cancel_btn.setText("Finish"))
         dlg.setCancelFunc(win.network.cancel)
         win.threadpool.start(worker)
         self.close()
