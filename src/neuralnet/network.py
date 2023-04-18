@@ -16,11 +16,7 @@ from neuralnet.models.ResNet import ResNet
 class Network():
     def __init__(self):
         # Initialises a new Network instance which loads asl data
-        self.train_df_mnist = MNIST(pd.read_csv("./data/sign_mnist_train.csv"))
-        self.test_df_mnist = MNIST(pd.read_csv("./data/sign_mnist_test.csv"))
-
-        self.testloader = DataLoader(
-            self.test_df_mnist, batch_size=1, shuffle=True)
+        self.loadDatasets()
 
     def setSaveMethod(self, save_method):
         self.save_method = save_method
@@ -146,3 +142,14 @@ class Network():
 
     def cancel(self):
         self.stop = True
+
+    def loadDatasets(self):
+        try:
+            self.train_df_mnist = MNIST(
+                pd.read_csv("./data/sign_mnist_train.csv"))
+            self.test_df_mnist = MNIST(
+                pd.read_csv("./data/sign_mnist_test.csv"))
+            self.testloader = DataLoader(
+                self.test_df_mnist, batch_size=1, shuffle=True)
+        except:
+            pass

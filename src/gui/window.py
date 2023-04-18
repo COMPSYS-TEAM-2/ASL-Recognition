@@ -5,6 +5,7 @@ from gui.camera import Camera
 from gui.messageDialog import MessageDialog
 from gui.imagesDialog import ImagesDialog
 from gui.trainConfig import TrainConfig
+from gui.worker import Worker
 from neuralnet.network import Network
 
 
@@ -57,6 +58,10 @@ class Window(QMainWindow):
         self.trainModelAct = QAction('&Train Model', self)
         self.trainModelAct.triggered.connect(self.train)
 
+        # Download model (File)
+        downloadAct = QAction('&Download Dataset', self)
+        downloadAct.triggered.connect(self.download)
+
         # # View Trained Images (View)
         trainImagesAct = QAction('&View Training Images', self)
         trainImagesAct.triggered.connect(self.showTrainImages)
@@ -71,6 +76,7 @@ class Window(QMainWindow):
         # File section
         fileMenu = menubar.addMenu('&File')
         fileMenu.addAction(self.trainModelAct)
+        fileMenu.addAction(downloadAct)
         fileMenu.addAction(self.exitAct)
         # View section
         viewMenu = menubar.addMenu('&View')
@@ -201,3 +207,14 @@ class Window(QMainWindow):
         name = self.getModel()
         model = self.models[name]["model"]
         self.network.load_model(name, model)
+
+    def download(self):
+        worker = Worker(self.downloadDataset)
+        self.threadpool.start(worker)
+        worker.signals.finished.connect(lambda: self.messageDialog(
+            "Success", "Dataset downloaded successfully!"))
+
+    def downloadDataset(self):
+        import kaggle
+        kaggle.api.dataset_download_files(
+            'datamunge/sign-language-mnist', path='./data', unzip=True)
