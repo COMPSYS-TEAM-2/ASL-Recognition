@@ -145,6 +145,15 @@ class Network():
 
     def loadDatasets(self):
         try:
+            #
+            #
+            # Change this
+            self.trainModel = "./data/sign_minst_train.csv"
+            self.testModel = "./data/sign_minst_test.csv"
+            #
+            #
+            #
+
             self.train_df_mnist = MNIST(
                 pd.read_csv("./data/sign_mnist_train.csv"))
             self.test_df_mnist = MNIST(
