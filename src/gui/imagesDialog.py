@@ -112,7 +112,7 @@ class ImagesDialog(QDialog):
         self.updateTextBrowser()
 
         # If the letter of the image is not the same as the fileter, skip it
-        if self.alphabet[int(self.data.iloc[i, 0])] == self.currentFilter.lower() or self.currentFilter == "":
+        if self.alphabet[int(self.data.iloc[i, 0])] == self.currentFilter.upper() or self.currentFilter == "":
             # Format the image to be used by PyQt
             sample = np.reshape(
                 self.data.iloc[i, 1:].values, (self.w, self.h))
