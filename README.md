@@ -21,6 +21,9 @@ conda activate enviroment-name
 ```bash
 pip install -r requirements.txt
 ```
+6) Setup kaggle.json API key (If you want to download the dataset from the application)
+
+[Instructions Here](https://github.com/Kaggle/kaggle-api#api-credentials)
 
 ## Usage
 
