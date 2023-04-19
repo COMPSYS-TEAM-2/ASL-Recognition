@@ -6,6 +6,7 @@ from gui.messageDialog import MessageDialog
 from gui.imagesDialog import ImagesDialog
 from gui.trainConfig import TrainConfig
 from gui.worker import Worker
+from neuralnet.data import Data
 from neuralnet.network import Network
 
 
@@ -21,6 +22,7 @@ class Window(QMainWindow):
         self.threadpool = QThreadPool()
         self.network = Network()
         self.network.setSaveMethod(self.saveModel)
+        self.data = Data()
 
         self.loadModels()
 
@@ -299,7 +301,7 @@ class Window(QMainWindow):
         """
         On download complete load the dataset from kaggle and inform the user.
         """
-        self.network.loadDatasets()
+        self.data.loadDatasets()
         self.messageDialog(
             "Success!", "Dataset downloaded successfully!")
 
@@ -309,7 +311,7 @@ class Window(QMainWindow):
         if not, show an error message
         returns True if dataset is available
         """
-        if self.network.test_dataset and self.network.train_dataset:
+        if self.data.test_dataset and self.data.train_dataset:
             return True
 
         self.messageDialog(
@@ -326,4 +328,4 @@ class Window(QMainWindow):
         self.dialog.setNameFilter("CSV (*.csv)")
 
         if self.dialog.exec():
-            self.network.loadDataset(self.dialog.selectedFiles()[0], train)
+            self.data.loadDataset(self.dialog.selectedFiles()[0], train)

@@ -7,6 +7,7 @@ import torch.optim as optim
 from torch.utils.data import DataLoader
 from PyQt6.QtCore import pyqtSignal
 from torch.utils.data import random_split
+from neuralnet.data import Data
 from neuralnet.mnist import MNIST
 from neuralnet.models.AlexNet import AlexNet
 from neuralnet.models.LeNet import LeNet
@@ -19,9 +20,7 @@ class Network():
         """
         Initialises a new Network instance which loads the datasets if they exist.
         """
-        self.train_dataset = False
-        self.test_dataset = False
-        self.loadDatasets()
+        self.data = Data()
 
     def setSaveMethod(self, save_method):
         """
@@ -40,9 +39,9 @@ class Network():
         if (SPLIT != 100):
             # Randomly splits the dataset into a training and testing set with the given split
             train_data, test_data = random_split(
-                self.train_df_mnist, [SPLIT/100, 1-SPLIT/100])
+                Data.train_df_mnist, [SPLIT/100, 1-SPLIT/100])
         else:
-            train_data = self.train_df_mnist
+            train_data = self.data.train_df_mnist
 
         trainloader = DataLoader(
             train_data, batch_size=BATCH_SIZE, shuffle=True)
@@ -104,7 +103,7 @@ class Network():
         If percentage is True then it will return the percentage of correct predictions.
         If percentage is False then it will return the number of correct predictions and the total number of predictions.
         """
-        loader = self.testloader
+        loader = self.data.testloader
         if (dataset):
             loader = DataLoader(dataset, batch_size=1, shuffle=True)
 
@@ -164,29 +163,3 @@ class Network():
     def cancel(self):
         """Stops the training process on another thread"""
         self.stop = True
-
-    def loadDatasets(self):
-        """
-        Loads the default kaggle datasets if they exist
-        """
-        self.loadDataset("./data/sign_mnist_train.csv")
-        self.loadDataset("./data/sign_mnist_test.csv", False)
-
-    # Function to help the user import their own dataset
-
-    def loadDataset(self, dataset: str, train: bool = True):
-        """
-        Loads the supplied datasets if they exist
-        train - whether the dataset will be imported as a training dataset or not.
-        """
-        try:
-            if train:
-                self.train_df_mnist = MNIST(pd.read_csv(dataset))
-                self.train_dataset = True
-            else:
-                self.test_df_mnist = MNIST(pd.read_csv(dataset))
-                self.testloader = DataLoader(
-                    self.test_df_mnist, batch_size=1, shuffle=True)
-                self.test_dataset = True
-        except Exception as e:
-            pass
