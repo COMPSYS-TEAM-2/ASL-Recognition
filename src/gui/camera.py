@@ -1,5 +1,5 @@
 from PyQt6.QtWidgets import QLabel, QWidget, QGridLayout
-from PyQt6.QtMultimedia import QMediaDevices, QCamera, QCameraDevice, QMediaCaptureSession, QImageCapture
+from PyQt6.QtMultimedia import QMediaDevices, QCamera, QMediaCaptureSession, QImageCapture
 from PyQt6.QtMultimediaWidgets import QVideoWidget
 from PyQt6.QtGui import QPalette, QColor, QImage
 from PyQt6.QtCore import Qt
@@ -84,7 +84,7 @@ class Camera(QWidget):
         try:
             # Load model takes name as an input, set this to be the value from the combobox
             self.win.loadModel()
-            result = self.win.network.test(image)
+            result = self.win.test.test(image)
             _, prediction = max(result, 1)
             # Result is an array of all the probablilities
             # This can be passed to the window in order to fill the percentages box

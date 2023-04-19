@@ -1,10 +1,10 @@
 from PyQt6.QtWidgets import QDialog, QLabel, QGridLayout, QScrollArea, QFormLayout, QGroupBox, QLineEdit, QTextBrowser, QCheckBox, QPushButton
 from PyQt6.QtGui import QPixmap
 from PyQt6.QtCore import QTimer
-import pandas as pd
 import numpy as np
 import PIL.Image as pil
 from PIL.ImageQt import ImageQt
+from neuralnet.data import Data
 
 from neuralnet.mnist import MNIST
 
@@ -20,10 +20,10 @@ class ImagesDialog(QDialog):
 
         if test:
             self.setWindowTitle("Test Images")
-            self.data = pd.read_csv('./data/sign_mnist_test.csv')
+            self.data = Data().test_data
         else:
             self.setWindowTitle("Train Images")
-            self.data = pd.read_csv('./data/sign_mnist_train.csv')
+            self.data = Data().train_data
 
         self.initLayout()
         self.initImageViewer()
@@ -207,7 +207,7 @@ class ImagesDialog(QDialog):
             images = self.data.iloc[self.selection]
             # Format the images to be used by the network and test them
             images = MNIST(images)
-            correct, total = window.network.test_all(images, False)
+            correct, total = window.test.test_all(images, False)
             window.messageDialog(
                 "Results", f"{correct}/{total} images were correctly classified.")
         except:

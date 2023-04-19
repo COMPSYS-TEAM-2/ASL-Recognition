@@ -5,6 +5,7 @@ from PyQt6.QtCore import Qt
 
 from gui.trainDialog import TrainDialog
 from gui.trainWorker import TrainWorker
+from neuralnet.train import Train
 
 
 class TrainConfig(QDialog):
@@ -112,8 +113,9 @@ class TrainConfig(QDialog):
         Starts the training process on the seperate thread and creates a new training dialog which shows training progress.
         """
         win = self.parent()
+        train = Train(win.saveModel)
         dlg = TrainDialog(win)
-        worker = TrainWorker(win.network, self.getModel(), int(
+        worker = TrainWorker(train, self.getModel(), int(
             self.epoch_line.text()), int(self.batch_size_line.text()), self.slider.value(), self.name_line.text())
         worker.signals.progress.connect(dlg.pbar.setValue)
         worker.signals.message.connect(
@@ -121,6 +123,6 @@ class TrainConfig(QDialog):
         worker.signals.timer.connect(dlg.setTime)
         worker.signals.finished.connect(
             lambda: dlg.cancel_btn.setText("Finish"))
-        dlg.setCancelFunc(win.network.cancel)
+        dlg.setCancelFunc(train.cancel)
         win.threadpool.start(worker)
         self.close()

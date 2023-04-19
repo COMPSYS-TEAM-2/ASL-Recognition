@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import QMainWindow, QApplication, QPushButton, QLabel, QTextBrowser, QGridLayout, QWidget, QComboBox, QSlider
+from PyQt6.QtWidgets import QMainWindow, QApplication, QPushButton, QLabel, QTextBrowser, QGridLayout, QWidget, QComboBox, QFileDialog
 from PyQt6.QtCore import Qt, QThreadPool
 from PyQt6.QtGui import QAction
 from gui.camera import Camera
@@ -6,7 +6,8 @@ from gui.messageDialog import MessageDialog
 from gui.imagesDialog import ImagesDialog
 from gui.trainConfig import TrainConfig
 from gui.worker import Worker
-from neuralnet.network import Network
+from neuralnet.data import Data
+from neuralnet.test import Test
 
 
 class Window(QMainWindow):
@@ -19,8 +20,9 @@ class Window(QMainWindow):
         self.setGeometry(0, 0, 1280, 720)
 
         self.threadpool = QThreadPool()
-        self.network = Network()
-        self.network.setSaveMethod(self.saveModel)
+        self.test = Test()
+        # self.network.setSaveMethod(self.saveModel)
+        self.data = Data()
 
         self.loadModels()
 
@@ -75,12 +77,11 @@ class Window(QMainWindow):
 
         # Import train model (File)
         importTrainAct = QAction('&Import Training Dataset', self)
-        importTrainAct.triggered.connect(self.network.importTrainDataset)
+        importTrainAct.triggered.connect(lambda: self.importDataset())
 
         # Import test model (File)
         importTestAct = QAction('&Import Testing Dataset', self)
-        importTestAct.triggered.connect(self.network.importTestDataset)
-        
+        importTestAct.triggered.connect(lambda: self.importDataset(False))
         # # View Trained Images (View)
         trainImagesAct = QAction('&View Training Images', self)
         trainImagesAct.triggered.connect(self.showTrainImages)
@@ -276,7 +277,7 @@ class Window(QMainWindow):
         """
         name = self.getModel()
         model = self.models[name]["model"]
-        self.network.load_model(name, model)
+        self.test.load_model(name, model)
 
     def download(self):
         """
@@ -300,7 +301,7 @@ class Window(QMainWindow):
         """
         On download complete load the dataset from kaggle and inform the user.
         """
-        self.network.loadDatasets()
+        self.data.loadDatasets()
         self.messageDialog(
             "Success!", "Dataset downloaded successfully!")
 
@@ -310,8 +311,21 @@ class Window(QMainWindow):
         if not, show an error message
         returns True if dataset is available
         """
-        if self.network.dataset:
+        if self.data.test_dataset and self.data.train_dataset:
             return True
 
-        self.messageDialog("Error!", "No Dataset found!")
+        self.messageDialog(
+            "Error!", "No Datasets found! Please load a test and train dataset.")
         return False
+
+    def importDataset(self, train: bool = True):
+        """
+        Imports a single dataset from the clients desktop
+        train - whether the dataset will be imported as a training dataset or not.
+        """
+        self.dialog = QFileDialog()
+        self.dialog.setFileMode(QFileDialog.FileMode.ExistingFiles)
+        self.dialog.setNameFilter("CSV (*.csv)")
+
+        if self.dialog.exec():
+            self.data.loadDataset(self.dialog.selectedFiles()[0], train)
