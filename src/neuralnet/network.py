@@ -5,12 +5,15 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import DataLoader
-from PyQt6.QtCore import pyqtSignal
+from PyQt6.QtCore import pyqtSignal, QStringListModel
 from torch.utils.data import random_split
 from neuralnet.mnist import MNIST
 from neuralnet.models.AlexNet import AlexNet
 from neuralnet.models.LeNet import LeNet
 from neuralnet.models.ResNet import ResNet
+from PyQt6.QtWidgets import QFileDialog
+from pathlib import Path
+
 
 
 class Network():
@@ -145,19 +148,14 @@ class Network():
 
     def loadDatasets(self):
         try:
-            #
-            #
-            # Change this
-            self.trainModel = "./data/sign_minst_train.csv"
-            self.testModel = "./data/sign_minst_test.csv"
-            #
-            #
-            #
-
+            
+            self.trainModel = str(self.importTestDataset())
+            self.testModel = str(self.importTestDataset())
+            
             self.train_df_mnist = MNIST(
-                pd.read_csv("./data/sign_mnist_train.csv"))
+                pd.read_csv(self.trainModel))
             self.test_df_mnist = MNIST(
-                pd.read_csv("./data/sign_mnist_test.csv"))
+                pd.read_csv(self.testModel))
             self.testloader = DataLoader(
                 self.test_df_mnist, batch_size=1, shuffle=True)
         except:
@@ -165,10 +163,23 @@ class Network():
 
     # Function to help the user import their own dataset
     def importTrainDataset(self):
-        # Logic
+
+        self.dialog = QFileDialog()
+        self.dialog.setFileMode(QFileDialog.FileMode.ExistingFiles)
+        self.dialog.setNameFilter("CSV (*.csv)")
+        
+        if self.dialog.exec() :
+            return self.dialog.selectedFiles()
         pass
 
     # Function to help the user import their own dataset
     def importTestDataset(self):
-        # Logic
+
+        self.dialog = QFileDialog()
+        self.dialog.setFileMode(QFileDialog.FileMode.ExistingFiles)
+        self.dialog.setNameFilter("CSV (*.csv)")
+        
+        if self.dialog.exec() :
+            return self.dialog.selectedFiles()
+
         pass

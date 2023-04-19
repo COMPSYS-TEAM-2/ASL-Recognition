@@ -67,7 +67,7 @@ class Window(QMainWindow):
         importTrainAct.triggered.connect(self.network.importTrainDataset)
 
         # Import test model (File)
-        importTestAct = QAction('&Import Training Dataset', self)
+        importTestAct = QAction('&Import Testing Dataset', self)
         importTestAct.triggered.connect(self.network.importTestDataset)
         
         # # View Trained Images (View)
