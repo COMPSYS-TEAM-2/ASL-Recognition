@@ -25,12 +25,14 @@ class ImagesDialog(QDialog):
             self.setWindowTitle("Train Images")
             self.data = Data().train_data
 
+        self.letterQuantities = self.data.iloc[:, 0].value_counts(sort=False)
+
+        self.initConstants()
         self.initLayout()
         self.initImageViewer()
         self.initFilter()
         self.initQuantities()
         self.initTestButton()
-        self.initConstants()
         self.show()
 
         self.closeEvent = self.exitWindow
@@ -63,8 +65,13 @@ class ImagesDialog(QDialog):
         """
         self.quantityLabel = QLabel("Quantities")
         self.quantities = QTextBrowser()
-        self.quantities.setText(
-            "A:\nB:\nC:\nD:\nE:\nF:\nG:\nH:\nI:\nJ:\nK:\nL:\nM:\nN:\nO:\nP:\nQ:\nR:\nS:\nT:\nU:\nV:\nW:\nX:\nY:\nZ:")
+        for i, letter in enumerate(self.alphabet):
+            try:
+                count = self.letterQuantities[i]
+            except KeyError:
+                count = 0
+            appendString = str(f"{letter}: {count}")
+            self.quantities.append(appendString)
         self.letterQuantities = [0]*26
         self.mainLayout.addWidget(self.quantityLabel, 1, 6, 1, 2)
         self.mainLayout.addWidget(self.quantities, 2, 6, 20, 2)
@@ -107,12 +114,8 @@ class ImagesDialog(QDialog):
         i = self.i
         self.clear = False
 
-        # update the letter count
-        self.letterQuantities[int(self.data.iloc[i, 0])] += 1
-        self.updateTextBrowser()
-
         # If the letter of the image is not the same as the fileter, skip it
-        if self.alphabet[int(self.data.iloc[i, 0])] == self.currentFilter.upper() or self.currentFilter == "":
+        if self.currentFilter.upper().find(self.alphabet[int(self.data.iloc[i, 0])]) != -1 or self.currentFilter == "":
             # Format the image to be used by PyQt
             sample = np.reshape(
                 self.data.iloc[i, 1:].values, (self.w, self.h))
@@ -170,15 +173,6 @@ class ImagesDialog(QDialog):
             wigit = self.scrollLayout.itemAt(0).widget()
             wigit.setParent(None)
             wigit.destroy()
-
-    def updateTextBrowser(self):
-        """
-        Updates the text browser with the new letter quantities.
-        """
-        self.quantities.clear()
-        for i, letter in enumerate(self.alphabet):
-            appendString = str(letter + ": " + str(self.letterQuantities[i]))
-            self.quantities.append(appendString)
 
     def updateSelection(self, index: int, bool: bool):
         """
