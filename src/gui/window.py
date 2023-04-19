@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import QMainWindow, QApplication, QPushButton, QLabel, QTextBrowser, QGridLayout, QWidget, QComboBox, QSlider
+from PyQt6.QtWidgets import QMainWindow, QApplication, QPushButton, QLabel, QTextBrowser, QGridLayout, QWidget, QComboBox, QFileDialog
 from PyQt6.QtCore import Qt, QThreadPool
 from PyQt6.QtGui import QAction
 from gui.camera import Camera
@@ -75,12 +75,11 @@ class Window(QMainWindow):
 
         # Import train model (File)
         importTrainAct = QAction('&Import Training Dataset', self)
-        importTrainAct.triggered.connect(self.network.importTrainDataset)
+        importTrainAct.triggered.connect(lambda: self.importDataset())
 
         # Import test model (File)
         importTestAct = QAction('&Import Testing Dataset', self)
-        importTestAct.triggered.connect(self.network.importTestDataset)
-        
+        importTestAct.triggered.connect(lambda: self.importDataset(False))
         # # View Trained Images (View)
         trainImagesAct = QAction('&View Training Images', self)
         trainImagesAct.triggered.connect(self.showTrainImages)
@@ -310,8 +309,21 @@ class Window(QMainWindow):
         if not, show an error message
         returns True if dataset is available
         """
-        if self.network.dataset:
+        if self.network.test_dataset and self.network.train_dataset:
             return True
 
-        self.messageDialog("Error!", "No Dataset found!")
+        self.messageDialog(
+            "Error!", "No Datasets found! Please load a test and train dataset.")
         return False
+
+    def importDataset(self, train: bool = True):
+        """
+        Imports a single dataset from the clients desktop
+        train - whether the dataset will be imported as a training dataset or not.
+        """
+        self.dialog = QFileDialog()
+        self.dialog.setFileMode(QFileDialog.FileMode.ExistingFiles)
+        self.dialog.setNameFilter("CSV (*.csv)")
+
+        if self.dialog.exec():
+            self.network.loadDataset(self.dialog.selectedFiles()[0], train)

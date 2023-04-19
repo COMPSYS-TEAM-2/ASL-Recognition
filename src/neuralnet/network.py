@@ -5,15 +5,13 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import DataLoader
-from PyQt6.QtCore import pyqtSignal, QStringListModel
+from PyQt6.QtCore import pyqtSignal
 from torch.utils.data import random_split
 from neuralnet.mnist import MNIST
 from neuralnet.models.AlexNet import AlexNet
 from neuralnet.models.LeNet import LeNet
 from neuralnet.models.ResNet import ResNet
 from PyQt6.QtWidgets import QFileDialog
-from pathlib import Path
-
 
 
 class Network():
@@ -21,6 +19,8 @@ class Network():
         """
         Initialises a new Network instance which loads the datasets if they exist.
         """
+        self.train_dataset = False
+        self.test_dataset = False
         self.loadDatasets()
 
     def setSaveMethod(self, save_method):
@@ -166,41 +166,27 @@ class Network():
         self.stop = True
 
     def loadDatasets(self):
-        """Loads the datasets if they exist"""
+        """
+        Loads the default kaggle datasets if they exist
+        """
+        self.loadDataset("./data/sign_mnist_train.csv")
+        self.loadDataset("./data/sign_mnist_test.csv", False)
+
+    # Function to help the user import their own dataset
+
+    def loadDataset(self, dataset: str, train: bool = True):
+        """
+        Loads the supplied datasets if they exist
+        train - whether the dataset will be imported as a training dataset or not.
+        """
         try:
-            
-            self.trainModel = str(self.importTestDataset())
-            self.testModel = str(self.importTestDataset())
-            
-            self.train_df_mnist = MNIST(
-                pd.read_csv(self.trainModel))
-            self.test_df_mnist = MNIST(
-                pd.read_csv(self.testModel))
-            self.testloader = DataLoader(
-                self.test_df_mnist, batch_size=1, shuffle=True)
-            self.dataset = True
-        except:
+            if train:
+                self.train_df_mnist = MNIST(pd.read_csv(dataset))
+                self.train_dataset = True
+            else:
+                self.test_df_mnist = MNIST(pd.read_csv(dataset))
+                self.testloader = DataLoader(
+                    self.test_df_mnist, batch_size=1, shuffle=True)
+                self.test_dataset = True
+        except Exception as e:
             pass
-
-    # Function to help the user import their own dataset
-    def importTrainDataset(self):
-
-        self.dialog = QFileDialog()
-        self.dialog.setFileMode(QFileDialog.FileMode.ExistingFiles)
-        self.dialog.setNameFilter("CSV (*.csv)")
-        
-        if self.dialog.exec() :
-            return self.dialog.selectedFiles()
-        pass
-
-    # Function to help the user import their own dataset
-    def importTestDataset(self):
-
-        self.dialog = QFileDialog()
-        self.dialog.setFileMode(QFileDialog.FileMode.ExistingFiles)
-        self.dialog.setNameFilter("CSV (*.csv)")
-        
-        if self.dialog.exec() :
-            return self.dialog.selectedFiles()
-
-        pass
