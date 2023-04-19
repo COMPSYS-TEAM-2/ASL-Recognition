@@ -73,6 +73,14 @@ class Window(QMainWindow):
         downloadAct = QAction('&Download Dataset', self)
         downloadAct.triggered.connect(self.download)
 
+        # Import train model (File)
+        importTrainAct = QAction('&Import Training Dataset', self)
+        importTrainAct.triggered.connect(self.network.importTrainDataset)
+
+        # Import test model (File)
+        importTestAct = QAction('&Import Testing Dataset', self)
+        importTestAct.triggered.connect(self.network.importTestDataset)
+        
         # # View Trained Images (View)
         trainImagesAct = QAction('&View Training Images', self)
         trainImagesAct.triggered.connect(self.showTrainImages)
@@ -88,6 +96,8 @@ class Window(QMainWindow):
         fileMenu = menubar.addMenu('&File')
         fileMenu.addAction(self.trainModelAct)
         fileMenu.addAction(downloadAct)
+        fileMenu.addAction(importTrainAct)
+        fileMenu.addAction(importTestAct)
         fileMenu.addAction(self.exitAct)
         # View section
         viewMenu = menubar.addMenu('&View')
