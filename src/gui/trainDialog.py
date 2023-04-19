@@ -6,6 +6,9 @@ from PyQt6.QtCore import QTimer
 class TrainDialog(QDialog):
     # Dialog to train the database
     def __init__(self, parent=None):
+        """
+        Initializes the training dialog
+        """
         super().__init__(parent=parent)
         self.setWindowTitle("Training")
         self.setFixedSize(300, 400)  # TODO Fix size
@@ -22,6 +25,7 @@ class TrainDialog(QDialog):
         self.pbar.setMaximum(100)
         self.pbar.setValue(0)
 
+        # Timer
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.updateTime)
         self.time = QTextBrowser(self)
@@ -37,26 +41,41 @@ class TrainDialog(QDialog):
         self.show()
 
     def setCancelFunc(self, cancelFunc):
+        """
+        Sets the cancel function allowing the user to cancel the training process
+        """
         self.cancelFunc = cancelFunc
 
     def setTime(self, time):
+        """
+        Sets the time remaining to time
+        """
         if self.time_remaning == -1:
             self.timer.start(1000)
         self.time_remaning = int(time)
-        self.updateGUi()
+        self.updateGUI()
 
     def updateTime(self):
+        """
+        On time out, updates the time remaining
+        """
         self.time_remaning -= 1
         if self.time_remaning <= 0:
             self.time_remaning = 0
             self.timer.stop()
-        self.updateGUi()
+        self.updateGUI()
 
-    def updateGUi(self):
+    def updateGUI(self):
+        """
+        Updates the time remaining to the GUI
+        """
         self.time_remaning
         self.time.setText(str(datetime.timedelta(seconds=self.time_remaning)))
 
     def closeEvent(self, event):
+        """
+        On close of the dialog, stops the timer and calls the Network cancel function
+        """
         self.cancelFunc()
         self.timer.stop()
         event.accept()

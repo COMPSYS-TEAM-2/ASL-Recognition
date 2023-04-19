@@ -11,8 +11,10 @@ from neuralnet.network import Network
 
 class Window(QMainWindow):
     def __init__(self, parent=None):
+        """
+        Define the initial setup
+        """
         super().__init__(parent)
-        # Define the initial setup
         self.setWindowTitle("Sign Language Recognition")
         self.setGeometry(0, 0, 1280, 720)
 
@@ -34,12 +36,18 @@ class Window(QMainWindow):
         self.show()
 
     def initMainLayout(self):
+        """
+        Initialize the main layout of the window
+        """
         self.mainLayout = QGridLayout()
         centralWidget = QWidget(self)
         centralWidget.setLayout(self.mainLayout)
         self.setCentralWidget(centralWidget)
 
     def initTitle(self):
+        """
+        Initialize the title of the window
+        """
         self.font = self.font()
         self.title = QLabel("HAND AI")
         self.font.setPointSize(36)
@@ -49,6 +57,9 @@ class Window(QMainWindow):
             self.title, 0, 10, 2, 2, Qt.AlignmentFlag.AlignCenter)
 
     def initMenubar(self):
+        """
+        Initialize the menubar of the window
+        """
         # Quit Action (File)
         self.exitAct = QAction('&Quit', self)
         self.exitAct.setShortcut('Ctrl+Q')
@@ -94,6 +105,9 @@ class Window(QMainWindow):
         viewMenu.addAction(testImagesAct)
 
     def initButton(self):
+        """
+        Initialize the Take Photo Button of the window
+        """
         self.takePhotoBtn = QPushButton('Take photo')
         self.mainLayout.addWidget(
             self.takePhotoBtn, 2, 10, 1, 2, Qt.AlignmentFlag.AlignBottom)
@@ -103,7 +117,9 @@ class Window(QMainWindow):
             ).imageCaptured.connect(self.camera.handleCapture)
 
     def initModelSelector(self):
-        # Combo button
+        """
+        Initialize the Model Selector of the window
+        """
         self.modelsBox = QComboBox(self)
         self.modelsBox.addItems(self.models)
         self.mainLayout.addWidget(
@@ -111,6 +127,9 @@ class Window(QMainWindow):
         self.modelsBox.currentTextChanged.connect(self.updateModelInfo)
 
     def initInfo(self):
+        """
+        Initialize the model info of the window
+        """
         self.modelLabel = QLabel('Model:')
         self.mainLayout.addWidget(
             self.modelLabel, 4, 10, 1, 1, Qt.AlignmentFlag.AlignTop)
@@ -125,15 +144,10 @@ class Window(QMainWindow):
             self.splitLabel, 4, 11, 1, 1, Qt.AlignmentFlag.AlignBottom)
         self.updateModelInfo(self.modelsBox.currentText())
 
-    def updateModelInfo(self, name):
-        if not name:
-            return
-        self.modelLabel.setText(f"Model: {self.models[name]['model']}")
-        self.epochLabel.setText(f"Epoch: {self.models[name]['epoch']}")
-        self.batchLabel.setText(f"Batch: {self.models[name]['batchSize']}")
-        self.splitLabel.setText(f"Split: {self.models[name]['split']}%")
-
     def initProbabilities(self):
+        """
+        Initialize the probabilities section of the window
+        """
         label = QLabel('Letter Probabilties:')
         self.probabilities = QTextBrowser()
         self.probabilities.setText(
@@ -144,26 +158,60 @@ class Window(QMainWindow):
         self.mainLayout.addWidget(self.probabilities, 6, 10, 16, 2)
 
     def initCamera(self):
+        """
+        Initialize the camera of the window
+        """
         self.camera = Camera(self)
         self.mainLayout.addWidget(self.camera, 0, 0, 22, 10)
 
+    def updateModelInfo(self, name):
+        """
+        Update the model infor on change event of the model selector
+        """
+        if not name:
+            return
+        self.modelLabel.setText(f"Model: {self.models[name]['model']}")
+        self.epochLabel.setText(f"Epoch: {self.models[name]['epoch']}")
+        self.batchLabel.setText(f"Batch: {self.models[name]['batchSize']}")
+        self.splitLabel.setText(f"Split: {self.models[name]['split']}%")
+
     def getModel(self):
-        # Fetch the value from the combo button
+        """
+        Fetch the value from the combo button
+        """
         return self.modelsBox.currentText()
 
     def messageDialog(self, title, message):
+        """
+        Generate a message dialog box with the given title and message
+        """
         MessageDialog(self, title, message)
 
     def train(self):
-        TrainConfig(self)
+        """
+        If a dataset is available, open the train config dialog
+        """
+        if self.checkDataset():
+            TrainConfig(self)
 
     def showTrainImages(self):
-        ImagesDialog(self)
+        """
+        If a dataset is available, open the train images dialog
+        """
+        if self.checkDataset():
+            ImagesDialog(self)
 
     def showTestImages(self):
-        ImagesDialog(self, True)
+        """
+        If a dataset is available, open the test images dialog
+        """
+        if self.checkDataset():
+            ImagesDialog(self, True)
 
     def updatePercentages(self, results, prediction):
+        """
+        On the results of the prediction, update the percentages
+        """
         lettersArray = ["A: ", "B: ", "C: ", "D: ", "E: ", "F: ", "G: ", "H: ", "I: ", "J: ", "K: ", "L: ",
                         "M: ", "N: ", "O: ", "P: ", "Q: ", "R: ", "S: ", "T: ", "U: ", "V: ", "W: ", "X: ", "Y: ", "Z: "]
         valuesArray = []
@@ -186,6 +234,9 @@ class Window(QMainWindow):
         self.probabilities.append(appendResultString)
 
     def loadModels(self):
+        """
+        On startup, load the models from the models.sav file
+        """
         self.models = {}
         try:
             f = open("./output/models.sav", 'r')
@@ -200,10 +251,16 @@ class Window(QMainWindow):
             pass
 
     def updateModel(self, name, model, epoch, batchSize, split):
+        """
+        Update the models dictionary with the new model
+        """
         self.models[name] = {
             "model": model, "epoch": epoch, "batchSize": batchSize, "split": split}
 
     def saveModel(self, name, model, epoch, batchSize, split):
+        """
+        Save the new/updated models dictionary to models.sav file
+        """
         self.updateModel(name, model, epoch, batchSize, split)
         self.modelsBox.removeItem(self.modelsBox.findText(name))
         self.modelsBox.addItem(name)
@@ -214,17 +271,47 @@ class Window(QMainWindow):
         f.close()
 
     def loadModel(self):
+        """
+        Load a model into the network from the models dictionary
+        """
         name = self.getModel()
         model = self.models[name]["model"]
         self.network.load_model(name, model)
 
     def download(self):
+        """
+        Creates a thread that downloads the dataset from kaggle without blocking the UI
+        """
         worker = Worker(self.downloadDataset)
         self.threadpool.start(worker)
-        worker.signals.finished.connect(lambda: self.messageDialog(
-            "Success", "Dataset downloaded successfully!"))
+        worker.signals.finished.connect(self.downloadComplete)
+        worker.signals.error.connect(lambda: self.messageDialog(
+            "Error!", "Failed to download dataset! Make sure you have your kaggle.json setup in your \".kaggle\" folder."))
 
     def downloadDataset(self):
+        """
+        Downloads the dataset from kaggle
+        """
         import kaggle
         kaggle.api.dataset_download_files(
             'datamunge/sign-language-mnist', path='./data', unzip=True)
+
+    def downloadComplete(self):
+        """
+        On download complete load the dataset from kaggle and inform the user.
+        """
+        self.network.loadDatasets()
+        self.messageDialog(
+            "Success!", "Dataset downloaded successfully!")
+
+    def checkDataset(self):
+        """
+        Check if a dataset is available
+        if not, show an error message
+        returns True if dataset is available
+        """
+        if self.network.dataset:
+            return True
+
+        self.messageDialog("Error!", "No Dataset found!")
+        return False

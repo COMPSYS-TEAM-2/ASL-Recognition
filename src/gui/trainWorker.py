@@ -11,8 +11,10 @@ class Signals(QObject):
 
 
 class TrainWorker(QRunnable):
-
     def __init__(self, network: Network, model: str, epoch: int, batch_size: int, split: int, name: str):
+        """
+        Initialises a new TrainWorker instance which trains the model with the given parameters on a seperate thread.
+        """
         super().__init__()
         self.network = network
         self.model = model
@@ -24,9 +26,12 @@ class TrainWorker(QRunnable):
 
     @pyqtSlot()
     def run(self):
+        """
+        Runs the training on a seperate thread when the QThreadPool starts the worker.
+        """
         try:
             self.network.train(
-                self.model,self.name, self.signals.progress, self.signals.message, self.signals.timer, self.epoch, self.batch_size, self.split)
+                self.model, self.name, self.signals.progress, self.signals.message, self.signals.timer, self.epoch, self.batch_size, self.split)
         except StopIteration:
             pass
         finally:
