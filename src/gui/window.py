@@ -7,7 +7,7 @@ from gui.imagesDialog import ImagesDialog
 from gui.trainConfig import TrainConfig
 from gui.worker import Worker
 from neuralnet.data import Data
-from neuralnet.network import Network
+from neuralnet.test import Test
 
 
 class Window(QMainWindow):
@@ -20,8 +20,8 @@ class Window(QMainWindow):
         self.setGeometry(0, 0, 1280, 720)
 
         self.threadpool = QThreadPool()
-        self.network = Network()
-        self.network.setSaveMethod(self.saveModel)
+        self.test = Test()
+        # self.network.setSaveMethod(self.saveModel)
         self.data = Data()
 
         self.loadModels()
@@ -277,7 +277,7 @@ class Window(QMainWindow):
         """
         name = self.getModel()
         model = self.models[name]["model"]
-        self.network.load_model(name, model)
+        self.test.load_model(name, model)
 
     def download(self):
         """

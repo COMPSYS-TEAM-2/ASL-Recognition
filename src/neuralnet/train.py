@@ -1,31 +1,24 @@
 import os
 import time
-import pandas as pd
 import torch
 import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import DataLoader
 from PyQt6.QtCore import pyqtSignal
 from torch.utils.data import random_split
+
 from neuralnet.data import Data
-from neuralnet.mnist import MNIST
-from neuralnet.models.AlexNet import AlexNet
-from neuralnet.models.LeNet import LeNet
-from neuralnet.models.ResNet import ResNet
-from PyQt6.QtWidgets import QFileDialog
+from neuralnet.models.switchModel import switchModel
+from neuralnet.test import Test
 
 
-class Network():
-    def __init__(self):
+class Train():
+    def __init__(self, save_method):
         """
         Initialises a new Network instance which loads the datasets if they exist.
         """
         self.data = Data()
-
-    def setSaveMethod(self, save_method):
-        """
-        Sets the save method from the window to be used by the network class.
-        """
+        self.test = Test()
         self.save_method = save_method
 
     def train(self, model, name, pbar: pyqtSignal, message: pyqtSignal, timer: pyqtSignal, EPOCH=5, BATCH_SIZE=4, SPLIT=100):
@@ -34,12 +27,12 @@ class Network():
         """
         message.emit(f"Training {name}...\n")
 
-        self.switchModel(model)
+        self.model = switchModel(model)
 
         if (SPLIT != 100):
             # Randomly splits the dataset into a training and testing set with the given split
             train_data, test_data = random_split(
-                Data.train_df_mnist, [SPLIT/100, 1-SPLIT/100])
+                self.data.train_df_mnist, [SPLIT/100, 1-SPLIT/100])
         else:
             train_data = self.data.train_df_mnist
 
@@ -86,44 +79,16 @@ class Network():
 
         pbar.emit(99)
         message.emit("\nTesting model...")
+        self.test.importModel(self.model)
         if (SPLIT != 100):
             message.emit(
-                f"Accuracy of the network on the remaining train images: {self.test_all(test_data)} %")
+                f"Accuracy of the network on the remaining train images: {self.test.test_all(test_data)} %")
         message.emit(
-            f"Accuracy of the network on the test images: {self.test_all()} %")
+            f"Accuracy of the network on the test images: {self.test.test_all()} %")
 
         self.save_model(name, model, EPOCH, BATCH_SIZE, SPLIT)
         message.emit(f"\n{name} trained and saved!")
         pbar.emit(100)
-
-    def test_all(self, dataset=None, percentage=True):
-        """
-        Tests the current model with the test data by default.
-        If a dataset is supplied then it will test the model with the dataset.
-        If percentage is True then it will return the percentage of correct predictions.
-        If percentage is False then it will return the number of correct predictions and the total number of predictions.
-        """
-        loader = self.data.testloader
-        if (dataset):
-            loader = DataLoader(dataset, batch_size=1, shuffle=True)
-
-        correct = 0
-        total = 0
-        with torch.no_grad():
-            for data in loader:
-                images, labels = data
-                outputs = self.test(images)
-                _, predicted = torch.max(outputs.data, 1)
-                total += labels.size(0)
-                correct += (predicted == labels).sum().item()
-            if percentage:
-                return round(correct/total * 100, 2)
-            else:
-                return correct, total
-
-    def test(self, image):
-        """Tests the current model with the given image"""
-        return self.model(image)
 
     def save_model(self, name, model, epoch, batch_size, split):
         """
@@ -139,26 +104,6 @@ class Network():
             pass
         self.save_method(name, model, epoch, batch_size, split)
         torch.save(self.model.state_dict(), f"output/models/{name}.pth")
-
-    def load_model(self, name, model):
-        """
-        Loads the model under the given name.
-        """
-        self.switchModel(model)
-        self.model.load_state_dict(
-            torch.load(f"output/models/{name}.pth"))
-
-    def switchModel(self, name: str):
-        """Switches the model to the given name"""
-        name = name.lower()
-        if name == "lenet":
-            self.model = LeNet()
-        elif name == "alexnet":
-            self.model = AlexNet()
-        elif name == "resnet":
-            self.model = ResNet()
-        else:
-            self.model = LeNet()
 
     def cancel(self):
         """Stops the training process on another thread"""
